@@ -34,20 +34,20 @@ export default function DashboardPage() {
       title="Dashboard"
       description={`Ringkasan absensi ${formatDate(new Date())}`}
       action={
-        <Link href="/absensi" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[#5C6BC0] px-4 py-2 text-sm font-medium text-white shadow-sm outline-none hover:bg-[#4d59aa] focus-visible:ring-2 focus-visible:ring-[#5C6BC0] focus-visible:ring-offset-2">
+        <Link href="/absensi" className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#5C6BC0] px-4 py-2 text-sm font-medium text-white shadow-sm outline-none hover:bg-[#4d59aa] focus-visible:ring-2 focus-visible:ring-[#5C6BC0] focus-visible:ring-offset-2 sm:w-auto">
           <CalendarPlus className="h-4 w-4" />
           Input Absensi Hari Ini
         </Link>
       }
     >
       {isLoading ? (
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {[1, 2, 3, 4].map((item) => (
             <Skeleton key={item} className="h-28" />
           ))}
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <SummaryCard label="Total Siswa" value={data?.cards.totalSiswa ?? 0} />
           <SummaryCard label="Hadir Hari Ini" value={data?.cards.hadirHariIni ?? 0} />
           <SummaryCard label="Tidak Hadir" value={data?.cards.tidakHadir ?? 0} />
@@ -55,13 +55,13 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
-        <section className="rounded-xl border border-neutral-200 bg-white p-4 shadow-subtle">
+      <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+        <section className="min-w-0 rounded-xl border border-neutral-200 bg-white p-4 shadow-subtle">
           <div className="mb-4">
             <h2 className="text-base font-semibold text-neutral-950">Kehadiran per Kelas</h2>
             <p className="text-sm text-neutral-500">Akumulasi 7 hari terakhir.</p>
           </div>
-          <div className="h-80">
+          <div className="h-72 min-w-0 sm:h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data?.chart ?? []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
@@ -75,7 +75,7 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        <section>
+        <section className="min-w-0">
           <h2 className="mb-3 text-base font-semibold text-neutral-950">Absensi Terbaru</h2>
           <Table>
             <thead>
@@ -107,9 +107,9 @@ export default function DashboardPage() {
 
 function SummaryCard({ label, value }: { label: string; value: number | string }) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-subtle">
+    <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-subtle sm:p-5">
       <p className="text-sm text-neutral-500">{label}</p>
-      <p className="mt-3 text-3xl font-semibold text-neutral-950">{value}</p>
+      <p className="mt-3 text-3xl font-semibold leading-none text-neutral-950">{value}</p>
     </div>
   );
 }

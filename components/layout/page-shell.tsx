@@ -4,11 +4,11 @@ export function PageShell({ title, description, action, children, className }: {
   return (
     <div className={cn("space-y-6", className)}>
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-normal text-neutral-950">{title}</h1>
-          {description ? <p className="mt-1 text-sm text-neutral-500">{description}</p> : null}
+        <div className="min-w-0">
+          <h1 className="text-[clamp(1.75rem,7vw,2.25rem)] font-semibold leading-tight tracking-normal text-neutral-950 sm:text-2xl">{title}</h1>
+          {description ? <p className="mt-2 max-w-3xl text-sm leading-6 text-neutral-500 sm:mt-1">{description}</p> : null}
         </div>
-        {action ? <div className="flex shrink-0 items-center gap-2">{action}</div> : null}
+        {action ? <div className="flex w-full shrink-0 flex-wrap items-center gap-2 sm:w-auto">{action}</div> : null}
       </div>
       {children}
     </div>
