@@ -10,5 +10,9 @@ export async function fetcher<T>(url: string): Promise<T> {
 }
 
 export function useApi<T>(url: string | null, options?: SWRConfiguration<T>) {
-  return useSWR<T>(url, fetcher<T>, options);
+  return useSWR<T>(url, fetcher<T>, {
+    keepPreviousData: true,
+    revalidateOnFocus: false,
+    ...options
+  });
 }

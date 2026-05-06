@@ -1,5 +1,5 @@
 import { LoadingPanel } from "@/components/ui/loading-panel";
 
-export default function Loading() {
+export default function DashboardLoading() {
   return <LoadingPanel />;
 }

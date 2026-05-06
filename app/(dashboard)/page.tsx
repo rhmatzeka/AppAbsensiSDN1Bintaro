@@ -1,7 +1,7 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { CalendarPlus } from "lucide-react";
 import { PageShell } from "@/components/layout/page-shell";
 import { StatusBadge } from "@/components/ui/badge";
@@ -10,6 +10,11 @@ import { Table, Td, Th } from "@/components/ui/table";
 import { useApi } from "@/hooks/useApi";
 import { formatDate } from "@/lib/utils";
 import type { AbsensiRow } from "@/types";
+
+const AttendanceChart = dynamic(() => import("@/components/dashboard/attendance-chart").then((mod) => mod.AttendanceChart), {
+  ssr: false,
+  loading: () => <Skeleton className="h-full w-full" />
+});
 
 type DashboardStats = {
   cards: {
@@ -62,16 +67,7 @@ export default function DashboardPage() {
             <p className="text-sm text-neutral-500">Akumulasi 7 hari terakhir.</p>
           </div>
           <div className="h-72 min-w-0 sm:h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data?.chart ?? []}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
-                <XAxis dataKey="kelas" tick={{ fontSize: 12 }} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
-                <Tooltip />
-                <Bar dataKey="hadir" fill="#4CAF81" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="tidakHadir" fill="#E05252" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <AttendanceChart data={data?.chart ?? []} />
           </div>
         </section>
 

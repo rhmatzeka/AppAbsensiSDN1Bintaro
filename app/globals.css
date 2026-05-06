@@ -33,6 +33,46 @@ textarea {
   transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease, box-shadow 150ms ease, opacity 150ms ease;
 }
 
+.navigation-progress {
+  width: 45%;
+  transform-origin: left;
+  animation: navigation-progress 1.1s ease-in-out infinite;
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.65), transparent);
+  animation: skeleton-shimmer 1.35s ease-in-out infinite;
+}
+
+@keyframes navigation-progress {
+  0% {
+    transform: translateX(-60%) scaleX(0.35);
+  }
+
+  45% {
+    transform: translateX(55%) scaleX(0.8);
+  }
+
+  100% {
+    transform: translateX(175%) scaleX(0.45);
+  }
+}
+
+@keyframes skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 @media print {
   .no-print {
     display: none !important;
