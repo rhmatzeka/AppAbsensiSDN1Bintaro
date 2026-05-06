@@ -2,8 +2,10 @@
 
 import { signIn } from "next-auth/react";
 import { Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
+import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -42,7 +44,7 @@ export default function LoginPage() {
       <div className="grid min-h-0 place-items-center overflow-y-auto">
         <form onSubmit={onSubmit} className="w-full max-w-md rounded-xl bg-[#FAFAFA] p-5 shadow-subtle sm:p-6">
           <div className="mb-6 text-center sm:mb-7">
-            <div className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-[#0A0A0A] text-base font-semibold text-white sm:h-14 sm:w-14 sm:text-lg">AS</div>
+            <Image src={logoSdnBintaro} alt="Logo SDN 1 Bintaro" width={72} height={72} className="mx-auto h-16 w-16 object-contain sm:h-[72px] sm:w-[72px]" priority />
             <h1 className="mt-4 text-2xl font-semibold text-neutral-950 sm:mt-5">Masuk ke Absensi</h1>
             <p className="mt-1 text-sm text-neutral-500">Gunakan akun sekolah untuk melanjutkan.</p>
           </div>

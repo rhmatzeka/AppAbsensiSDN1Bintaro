@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { BarChart3, CalendarCheck, GraduationCap, LayoutDashboard, PanelLeftClose, PanelLeftOpen, X, Users } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
 
 const items = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -24,7 +26,7 @@ export function Sidebar() {
       <div className="flex h-full flex-col">
         <div className="mb-6 flex items-center justify-between gap-2 px-2">
           <Link href="/" className="flex min-w-0 items-center gap-3">
-            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#0A0A0A] text-sm font-semibold text-white">AS</div>
+            <Image src={logoSdnBintaro} alt="Logo SDN 1 Bintaro" width={40} height={40} className="h-10 w-10 shrink-0 object-contain" />
             {!collapsed ? <span className="truncate text-sm font-semibold text-neutral-950">Absensi Sekolah</span> : null}
           </Link>
           <Button type="button" variant="ghost" className="h-9 w-9 px-0" onClick={() => setCollapsed((value) => !value)} aria-label="Toggle sidebar">
@@ -71,7 +73,7 @@ export function MobileSidebar({ open, onClose }: { open: boolean; onClose: () =>
       <aside className={cn("absolute left-0 top-0 h-full w-[min(320px,85vw)] border-r border-neutral-200 bg-[#FAFAFA] p-4 shadow-xl transition-transform duration-150 ease-out", open ? "translate-x-0" : "-translate-x-full")}>
         <div className="mb-8 flex items-center justify-between gap-3">
           <Link href="/" className="flex min-w-0 items-center gap-3" onClick={onClose}>
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-[#0A0A0A] text-sm font-semibold text-white">AS</div>
+            <Image src={logoSdnBintaro} alt="Logo SDN 1 Bintaro" width={48} height={48} className="h-12 w-12 shrink-0 object-contain" />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-neutral-950">Absensi Sekolah</p>
               <p className="truncate text-xs text-neutral-500">SDN 1 Bintaro</p>
