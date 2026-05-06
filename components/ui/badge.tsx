@@ -4,7 +4,7 @@ import type { AttendanceStatus } from "@/types";
 const statusClasses: Record<AttendanceStatus, string> = {
   HADIR: "bg-[#4CAF81]/15 text-[#2f7a59]",
   SAKIT: "bg-amber-100 text-amber-800",
-  IZIN: "bg-blue-100 text-blue-800",
+  IZIN: "bg-orange-100 text-orange-800",
   ALPHA: "bg-[#E05252]/15 text-[#b33a3a]"
 };
 

@@ -8,7 +8,7 @@ const config: Config = {
       colors: {
         ink: "#0A0A0A",
         surface: "#FAFAFA",
-        indigo: "#5C6BC0",
+        orange: "#F97316",
         success: "#4CAF81",
         danger: "#E05252"
       },

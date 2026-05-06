@@ -41,8 +41,8 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium text-neutral-600 outline-none hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-[#5C6BC0]",
-                  active && "bg-[#5C6BC0]/10 text-[#4d59aa]",
+                  "flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium text-neutral-600 outline-none hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-[#F97316]",
+                  active && "bg-[#F97316]/10 text-[#c2410c]",
                   collapsed && "justify-center px-0"
                 )}
               >
@@ -92,8 +92,8 @@ export function MobileSidebar({ open, onClose }: { open: boolean; onClose: () =>
                 href={item.href}
                 onClick={onClose}
                 className={cn(
-                  "flex min-h-12 items-center gap-3 rounded-xl px-4 text-sm font-medium text-neutral-700 outline-none hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-[#5C6BC0]",
-                  active && "bg-[#5C6BC0]/10 text-[#4d59aa]"
+                  "flex min-h-12 items-center gap-3 rounded-xl px-4 text-sm font-medium text-neutral-700 outline-none hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-[#F97316]",
+                  active && "bg-[#F97316]/10 text-[#c2410c]"
                 )}
               >
                 <Icon className="h-5 w-5 shrink-0" />
@@ -121,8 +121,8 @@ export function MobileBottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[11px] font-medium text-neutral-500 outline-none focus-visible:ring-2 focus-visible:ring-[#5C6BC0]",
-                active && "bg-[#5C6BC0]/10 text-[#4d59aa]"
+                "flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[11px] font-medium text-neutral-500 outline-none focus-visible:ring-2 focus-visible:ring-[#F97316]",
+                active && "bg-[#F97316]/10 text-[#c2410c]"
               )}
             >
               <Icon className="h-5 w-5" />

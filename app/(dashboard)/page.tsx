@@ -34,7 +34,7 @@ export default function DashboardPage() {
       title="Dashboard"
       description={`Ringkasan absensi ${formatDate(new Date())}`}
       action={
-        <Link href="/absensi" className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#5C6BC0] px-4 py-2 text-sm font-medium text-white shadow-sm outline-none hover:bg-[#4d59aa] focus-visible:ring-2 focus-visible:ring-[#5C6BC0] focus-visible:ring-offset-2 sm:w-auto">
+        <Link href="/absensi" className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#F97316] px-4 py-2 text-sm font-medium text-white shadow-sm outline-none hover:bg-[#ea580c] focus-visible:ring-2 focus-visible:ring-[#F97316] focus-visible:ring-offset-2 sm:w-auto">
           <CalendarPlus className="h-4 w-4" />
           Input Absensi Hari Ini
         </Link>

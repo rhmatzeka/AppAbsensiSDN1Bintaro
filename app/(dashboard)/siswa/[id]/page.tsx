@@ -27,7 +27,7 @@ type SiswaDetail = {
 const statusBg: Record<AttendanceStatus, string> = {
   HADIR: "bg-[#4CAF81] text-white",
   SAKIT: "bg-amber-400 text-neutral-950",
-  IZIN: "bg-blue-500 text-white",
+  IZIN: "bg-[#F97316] text-white",
   ALPHA: "bg-[#E05252] text-white"
 };
 

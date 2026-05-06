@@ -112,13 +112,13 @@ export default function KelasPage() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {data.map((item) => (
-            <button key={item.id} type="button" onClick={() => setSelectedId(item.id)} className="rounded-xl border border-neutral-200 bg-white p-5 text-left shadow-subtle outline-none hover:border-[#5C6BC0] focus-visible:ring-2 focus-visible:ring-[#5C6BC0]">
+            <button key={item.id} type="button" onClick={() => setSelectedId(item.id)} className="rounded-xl border border-neutral-200 bg-white p-5 text-left shadow-subtle outline-none hover:border-[#F97316] focus-visible:ring-2 focus-visible:ring-[#F97316]">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h2 className="text-lg font-semibold text-neutral-950">{item.nama}</h2>
                   <p className="mt-1 text-sm text-neutral-500">{item.tahunAjar}</p>
                 </div>
-                <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#5C6BC0]/10 text-[#5C6BC0]">
+                <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#F97316]/10 text-[#F97316]">
                   <Users className="h-5 w-5" />
                 </div>
               </div>
@@ -145,7 +145,7 @@ export default function KelasPage() {
               <h2 className="text-base font-semibold text-neutral-950">Siswa {selected.nama}</h2>
               <p className="text-sm text-neutral-500">{selected.siswa.length} siswa terdaftar</p>
             </div>
-            <Link href={`/absensi/${selected.id}`} className="rounded-xl bg-[#5C6BC0] px-4 py-2 text-sm font-medium text-white hover:bg-[#4d59aa]">
+            <Link href={`/absensi/${selected.id}`} className="rounded-xl bg-[#F97316] px-4 py-2 text-sm font-medium text-white hover:bg-[#ea580c]">
               Detail Absensi
             </Link>
           </div>
