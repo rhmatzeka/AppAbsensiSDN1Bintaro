@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { Role } from "@prisma/client";
-import { jsonError, readJson, requireAdmin, requireUser } from "@/lib/api";
+import { jsonError, readJson, requireUser } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 
 type Params = { params: Promise<{ id: string }> };
@@ -12,13 +11,9 @@ type KelasPayload = {
 };
 
 export async function GET(_request: NextRequest, { params }: Params) {
-  const { user, response } = await requireUser();
+  const { response } = await requireUser();
   if (response) return response;
   const { id } = await params;
-
-  if (user.role === Role.GURU && user.kelasId !== id) {
-    return NextResponse.json({ message: "Akses kelas ditolak" }, { status: 403 });
-  }
 
   try {
     const kelas = await prisma.kelas.findUnique({
@@ -33,10 +28,8 @@ export async function GET(_request: NextRequest, { params }: Params) {
 }
 
 export async function PUT(request: NextRequest, { params }: Params) {
-  const { user, response } = await requireUser();
+  const { response } = await requireUser();
   if (response) return response;
-  const forbidden = requireAdmin(user.role);
-  if (forbidden) return forbidden;
   const { id } = await params;
 
   try {
@@ -57,10 +50,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(_request: NextRequest, { params }: Params) {
-  const { user, response } = await requireUser();
+  const { response } = await requireUser();
   if (response) return response;
-  const forbidden = requireAdmin(user.role);
-  if (forbidden) return forbidden;
   const { id } = await params;
 
   try {

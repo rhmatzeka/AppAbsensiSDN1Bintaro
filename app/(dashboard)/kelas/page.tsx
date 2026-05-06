@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { Edit2, Plus, Trash2, Users } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { PageShell } from "@/components/layout/page-shell";
@@ -37,14 +36,12 @@ const emptyForm: KelasForm = {
 
 export default function KelasPage() {
   const { showToast } = useToast();
-  const { data: session } = useSession();
   const { data, isLoading, mutate } = useKelas();
   const [selectedId, setSelectedId] = useState("");
   const [form, setForm] = useState<KelasForm>(emptyForm);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const { data: selected } = useApi<KelasDetail>(selectedId ? `/api/kelas/${selectedId}` : null);
-  const isAdmin = session?.user.role === "ADMIN";
 
   function openCreate() {
     setForm(emptyForm);
@@ -99,12 +96,12 @@ export default function KelasPage() {
     <PageShell
       title="Manajemen Kelas"
       description="Kelola kelas dan lihat daftar siswa per kelas."
-      action={isAdmin ? (
+      action={
         <Button type="button" onClick={openCreate}>
           <Plus className="h-4 w-4" />
           Tambah Kelas
         </Button>
-      ) : null}
+      }
     >
       {isLoading ? (
         <div className="grid gap-4 md:grid-cols-3">
@@ -126,18 +123,16 @@ export default function KelasPage() {
                 </div>
               </div>
               <p className="mt-5 text-sm text-neutral-600">{item.jumlahSiswa} siswa</p>
-              {isAdmin ? (
-                <div className="mt-4 flex gap-2">
-                  <Button type="button" variant="secondary" className="h-9 px-3" onClick={(event) => { event.stopPropagation(); openEdit(item); }}>
-                    <Edit2 className="h-4 w-4" />
-                    Edit
-                  </Button>
-                  <Button type="button" variant="danger" className="h-9 px-3" onClick={(event) => { event.stopPropagation(); void remove(item.id); }}>
-                    <Trash2 className="h-4 w-4" />
-                    Hapus
-                  </Button>
-                </div>
-              ) : null}
+              <div className="mt-4 flex gap-2">
+                <Button type="button" variant="secondary" className="h-9 px-3" onClick={(event) => { event.stopPropagation(); openEdit(item); }}>
+                  <Edit2 className="h-4 w-4" />
+                  Edit
+                </Button>
+                <Button type="button" variant="danger" className="h-9 px-3" onClick={(event) => { event.stopPropagation(); void remove(item.id); }}>
+                  <Trash2 className="h-4 w-4" />
+                  Hapus
+                </Button>
+              </div>
             </button>
           ))}
         </div>

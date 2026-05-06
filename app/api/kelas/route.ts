@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { Role } from "@prisma/client";
-import { jsonError, readJson, requireAdmin, requireUser } from "@/lib/api";
+import { jsonError, readJson, requireUser } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 
 type KelasPayload = {
@@ -11,13 +10,11 @@ type KelasPayload = {
 };
 
 export async function GET() {
-  const { user, response } = await requireUser();
+  const { response } = await requireUser();
   if (response) return response;
 
   try {
-    const where = user.role === Role.GURU && user.kelasId ? { id: user.kelasId } : {};
     const kelas = await prisma.kelas.findMany({
-      where,
       include: { _count: { select: { siswa: true } } },
       orderBy: [{ tingkat: "asc" }, { nama: "asc" }]
     });
@@ -38,10 +35,8 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const { user, response } = await requireUser();
+  const { response } = await requireUser();
   if (response) return response;
-  const forbidden = requireAdmin(user.role);
-  if (forbidden) return forbidden;
 
   try {
     const body = await readJson<KelasPayload>(request);
