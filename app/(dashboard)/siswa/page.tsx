@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Edit2, Eye, Plus, Search, Trash2, Upload } from "lucide-react";
 import { FormEvent, useMemo, useState } from "react";
 import { PageShell } from "@/components/layout/page-shell";
@@ -39,6 +40,7 @@ const emptyForm: SiswaForm = {
 
 export default function SiswaPage() {
   const { showToast } = useToast();
+  const { data: session } = useSession();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [kelasId, setKelasId] = useState("");
@@ -50,6 +52,7 @@ export default function SiswaPage() {
   const { data, isLoading, mutate } = useSiswa({ page, search, kelasId });
 
   const kelasOptions = kelas ?? [];
+  const isAdmin = session?.user.role === "ADMIN";
 
   function openCreate() {
     setForm({ ...emptyForm, kelasId: kelasOptions[0]?.id ?? "" });
@@ -148,12 +151,12 @@ export default function SiswaPage() {
     <PageShell
       title="Manajemen Siswa"
       description="Kelola data siswa, filter berdasarkan kelas, dan import CSV."
-      action={
+      action={isAdmin ? (
         <Button type="button" onClick={openCreate}>
           <Plus className="h-4 w-4" />
           Tambah Siswa
         </Button>
-      }
+      ) : null}
     >
       <div className="grid gap-3 lg:grid-cols-[1fr_240px_220px]">
         <label className="relative block">
@@ -168,20 +171,22 @@ export default function SiswaPage() {
             </option>
           ))}
         </Select>
-        <label className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 text-sm font-medium text-neutral-700 hover:bg-neutral-50">
-          <Upload className="h-4 w-4" />
-          Import CSV
-          <input
-            type="file"
-            accept=".csv,text/csv"
-            className="sr-only"
-            onChange={async (event) => {
-              const file = event.target.files?.[0];
-              if (file) parseCsv(await file.text());
-              event.target.value = "";
-            }}
-          />
-        </label>
+        {isAdmin ? (
+          <label className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 text-sm font-medium text-neutral-700 hover:bg-neutral-50">
+            <Upload className="h-4 w-4" />
+            Import CSV
+            <input
+              type="file"
+              accept=".csv,text/csv"
+              className="sr-only"
+              onChange={async (event) => {
+                const file = event.target.files?.[0];
+                if (file) parseCsv(await file.text());
+                event.target.value = "";
+              }}
+            />
+          </label>
+        ) : null}
       </div>
 
       {csvPreview.length ? (
@@ -223,12 +228,16 @@ export default function SiswaPage() {
                     <Link href={`/siswa/${siswa.id}`} className="grid h-9 w-9 place-items-center rounded-lg text-neutral-500 hover:bg-neutral-100" aria-label="Detail siswa">
                       <Eye className="h-4 w-4" />
                     </Link>
-                    <button className="grid h-9 w-9 place-items-center rounded-lg text-neutral-500 hover:bg-neutral-100" onClick={() => openEdit(siswa)} aria-label="Edit siswa">
-                      <Edit2 className="h-4 w-4" />
-                    </button>
-                    <button className="grid h-9 w-9 place-items-center rounded-lg text-[#E05252] hover:bg-red-50" onClick={() => void remove(siswa.id)} aria-label="Hapus siswa">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    {isAdmin ? (
+                      <>
+                        <button className="grid h-9 w-9 place-items-center rounded-lg text-neutral-500 hover:bg-neutral-100" onClick={() => openEdit(siswa)} aria-label="Edit siswa">
+                          <Edit2 className="h-4 w-4" />
+                        </button>
+                        <button className="grid h-9 w-9 place-items-center rounded-lg text-[#E05252] hover:bg-red-50" onClick={() => void remove(siswa.id)} aria-label="Hapus siswa">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </>
+                    ) : null}
                   </div>
                 </Td>
               </tr>
