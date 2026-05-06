@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  password  String
+  role      Role      @default(GURU)
+  kelasId   String?
+  kelas     Kelas?    @relation(fields: [kelasId], references: [id])
+  createdAt DateTime  @default(now())
+  absensi   Absensi[]
+}
+
+model Kelas {
+  id        String    @id @default(cuid())
+  nama      String
+  tingkat   String
+  jurusan   String?
+  tahunAjar String
+  siswa     Siswa[]
+  absensi   Absensi[]
+  guru      User[]
+  createdAt DateTime  @default(now())
+}
+
+model Siswa {
+  id           String       @id @default(cuid())
+  nis          String       @unique
+  nama         String
+  jenisKelamin JenisKelamin
+  tanggalLahir DateTime?
+  alamat       String?
+  foto         String?
+  kelasId      String
+  kelas        Kelas        @relation(fields: [kelasId], references: [id], onDelete: Restrict)
+  absensi      Absensi[]
+  createdAt    DateTime     @default(now())
+}
+
+model Absensi {
+  id         String        @id @default(cuid())
+  tanggal    DateTime      @db.Date
+  status     StatusAbsensi
+  keterangan String?
+  siswaId    String
+  siswa      Siswa         @relation(fields: [siswaId], references: [id], onDelete: Cascade)
+  kelasId    String
+  kelas      Kelas         @relation(fields: [kelasId], references: [id], onDelete: Restrict)
+  userId     String
+  user       User          @relation(fields: [userId], references: [id])
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@unique([siswaId, tanggal])
+  @@index([kelasId, tanggal])
+  @@index([tanggal])
+}
+
+enum Role {
+  ADMIN
+  GURU
+}
+
+enum StatusAbsensi {
+  HADIR
+  SAKIT
+  IZIN
+  ALPHA
+}
+
+enum JenisKelamin {
+  LAKI_LAKI
+  PEREMPUAN
+}

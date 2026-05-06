@@ -1,0 +1,43 @@
+{
+  "name": "student-attendance-app",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "seed": "bun prisma db seed",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^6",
+    "@tailwindcss/forms": "latest",
+    "@tailwindcss/postcss": "latest",
+    "bcryptjs": "latest",
+    "clsx": "latest",
+    "date-fns": "latest",
+    "lucide-react": "latest",
+    "next": "^15",
+    "next-auth": "beta",
+    "react": "^19",
+    "react-dom": "^19",
+    "recharts": "latest",
+    "swr": "latest",
+    "tailwind-merge": "latest",
+    "tailwindcss": "latest"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "latest",
+    "@types/bcryptjs": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "^9",
+    "eslint-config-next": "^15",
+    "prisma": "^6",
+    "typescript": "latest"
+  }
+}

@@ -1,0 +1,115 @@
+"use client";
+
+import Link from "next/link";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { CalendarPlus } from "lucide-react";
+import { PageShell } from "@/components/layout/page-shell";
+import { StatusBadge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Table, Td, Th } from "@/components/ui/table";
+import { useApi } from "@/hooks/useApi";
+import { formatDate } from "@/lib/utils";
+import type { AbsensiRow } from "@/types";
+
+type DashboardStats = {
+  cards: {
+    totalSiswa: number;
+    hadirHariIni: number;
+    tidakHadir: number;
+    persentase: number;
+  };
+  recent: AbsensiRow[];
+  chart: {
+    kelas: string;
+    hadir: number;
+    tidakHadir: number;
+  }[];
+};
+
+export default function DashboardPage() {
+  const { data, isLoading } = useApi<DashboardStats>("/api/dashboard/stats");
+
+  return (
+    <PageShell
+      title="Dashboard"
+      description={`Ringkasan absensi ${formatDate(new Date())}`}
+      action={
+        <Link href="/absensi" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[#5C6BC0] px-4 py-2 text-sm font-medium text-white shadow-sm outline-none hover:bg-[#4d59aa] focus-visible:ring-2 focus-visible:ring-[#5C6BC0] focus-visible:ring-offset-2">
+          <CalendarPlus className="h-4 w-4" />
+          Input Absensi Hari Ini
+        </Link>
+      }
+    >
+      {isLoading ? (
+        <div className="grid gap-4 md:grid-cols-4">
+          {[1, 2, 3, 4].map((item) => (
+            <Skeleton key={item} className="h-28" />
+          ))}
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-4">
+          <SummaryCard label="Total Siswa" value={data?.cards.totalSiswa ?? 0} />
+          <SummaryCard label="Hadir Hari Ini" value={data?.cards.hadirHariIni ?? 0} />
+          <SummaryCard label="Tidak Hadir" value={data?.cards.tidakHadir ?? 0} />
+          <SummaryCard label="Persentase Kehadiran" value={`${data?.cards.persentase ?? 0}%`} />
+        </div>
+      )}
+
+      <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
+        <section className="rounded-xl border border-neutral-200 bg-white p-4 shadow-subtle">
+          <div className="mb-4">
+            <h2 className="text-base font-semibold text-neutral-950">Kehadiran per Kelas</h2>
+            <p className="text-sm text-neutral-500">Akumulasi 7 hari terakhir.</p>
+          </div>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data?.chart ?? []}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
+                <XAxis dataKey="kelas" tick={{ fontSize: 12 }} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+                <Tooltip />
+                <Bar dataKey="hadir" fill="#4CAF81" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="tidakHadir" fill="#E05252" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-base font-semibold text-neutral-950">Absensi Terbaru</h2>
+          <Table>
+            <thead>
+              <tr>
+                <Th>Nama</Th>
+                <Th>Kelas</Th>
+                <Th>Status</Th>
+                <Th>Tanggal</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {(data?.recent ?? []).map((item, index) => (
+                <tr key={item.id} className={index % 2 === 0 ? "bg-white hover:bg-neutral-50" : "bg-neutral-50/60 hover:bg-neutral-100"}>
+                  <Td>{item.siswa.nama}</Td>
+                  <Td>{item.kelas.nama}</Td>
+                  <Td>
+                    <StatusBadge status={item.status} />
+                  </Td>
+                  <Td>{formatDate(item.tanggal, "d MMM yyyy")}</Td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </section>
+      </div>
+    </PageShell>
+  );
+}
+
+function SummaryCard({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-subtle">
+      <p className="text-sm text-neutral-500">{label}</p>
+      <p className="mt-3 text-3xl font-semibold text-neutral-950">{value}</p>
+    </div>
+  );
+}
