@@ -38,35 +38,37 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="grid min-h-screen place-items-center bg-[#0A0A0A] p-4">
-      <form onSubmit={onSubmit} className="w-full max-w-md rounded-xl bg-[#FAFAFA] p-6 shadow-subtle">
-        <div className="mb-7 text-center">
-          <div className="mx-auto grid h-14 w-14 place-items-center rounded-xl bg-[#0A0A0A] text-lg font-semibold text-white">AS</div>
-          <h1 className="mt-5 text-2xl font-semibold text-neutral-950">Masuk ke Absensi</h1>
-          <p className="mt-1 text-sm text-neutral-500">Gunakan akun sekolah untuk melanjutkan.</p>
-        </div>
+    <main className="grid h-[100dvh] overflow-hidden bg-[#0A0A0A] px-4 py-4 sm:place-items-center">
+      <div className="grid min-h-0 place-items-center overflow-y-auto">
+        <form onSubmit={onSubmit} className="w-full max-w-md rounded-xl bg-[#FAFAFA] p-5 shadow-subtle sm:p-6">
+          <div className="mb-6 text-center sm:mb-7">
+            <div className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-[#0A0A0A] text-base font-semibold text-white sm:h-14 sm:w-14 sm:text-lg">AS</div>
+            <h1 className="mt-4 text-2xl font-semibold text-neutral-950 sm:mt-5">Masuk ke Absensi</h1>
+            <p className="mt-1 text-sm text-neutral-500">Gunakan akun sekolah untuk melanjutkan.</p>
+          </div>
 
-        <div className="space-y-4">
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-neutral-700">Email</span>
-            <Input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" />
-          </label>
+          <div className="space-y-4">
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-medium text-neutral-700">Email</span>
+              <Input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" />
+            </label>
 
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-neutral-700">Password</span>
-            <div className="relative">
-              <Input type={showPassword ? "text" : "password"} required value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" className="pr-11" />
-              <button type="button" className="absolute right-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-neutral-500 hover:bg-neutral-100" onClick={() => setShowPassword((value) => !value)} aria-label="Toggle password">
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-          </label>
-        </div>
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-medium text-neutral-700">Password</span>
+              <div className="relative">
+                <Input type={showPassword ? "text" : "password"} required value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" className="pr-11" />
+                <button type="button" className="absolute right-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-neutral-500 hover:bg-neutral-100" onClick={() => setShowPassword((value) => !value)} aria-label="Toggle password">
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </label>
+          </div>
 
-        <Button type="submit" className="mt-6 w-full" loading={loading}>
-          Masuk
-        </Button>
-      </form>
+          <Button type="submit" className="mt-6 w-full" loading={loading}>
+            Masuk
+          </Button>
+        </form>
+      </div>
     </main>
   );
 }
