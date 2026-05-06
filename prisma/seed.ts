@@ -192,24 +192,27 @@ async function main() {
     }
   });
 
-  const siswa = [];
+  const siswaData = [];
   for (const [kelasIndex, kelasItem] of kelas.entries()) {
     for (const [studentIndex, [nis, nama, jenisKelamin]] of studentsByClass[kelasIndex].entries()) {
-      siswa.push(
-        await prisma.siswa.create({
-          data: {
-            nis,
-            nama,
-            jenisKelamin,
-            tanggalLahir: birthDateForGrade(kelasIndex, studentIndex),
-            alamat: addresses[studentIndex % addresses.length],
-            kelasId: kelasItem.id
-          }
-        })
-      );
+      siswaData.push({
+        nis,
+        nama,
+        jenisKelamin,
+        tanggalLahir: birthDateForGrade(kelasIndex, studentIndex),
+        alamat: addresses[studentIndex % addresses.length],
+        kelasId: kelasItem.id
+      });
     }
   }
 
+  await prisma.siswa.createMany({ data: siswaData });
+
+  const siswa = await prisma.siswa.findMany({
+    orderBy: [{ kelas: { tingkat: "asc" } }, { nis: "asc" }]
+  });
+
+  const absensiData = [];
   for (let day = 0; day < 60; day += 1) {
     const tanggal = dateOnly(subDays(new Date(), day));
     const dayOfWeek = tanggal.getDay();
@@ -218,18 +221,18 @@ async function main() {
     for (const [studentIndex, siswaItem] of siswa.entries()) {
       const status = attendanceFor(studentIndex, day);
       const teacher = teachers.find((item) => item.kelasId === siswaItem.kelasId);
-      await prisma.absensi.create({
-        data: {
-          tanggal,
-          status,
-          keterangan: noteFor(status),
-          siswaId: siswaItem.id,
-          kelasId: siswaItem.kelasId,
-          userId: teacher?.id ?? admin.id
-        }
+      absensiData.push({
+        tanggal,
+        status,
+        keterangan: noteFor(status),
+        siswaId: siswaItem.id,
+        kelasId: siswaItem.kelasId,
+        userId: teacher?.id ?? admin.id
       });
     }
   }
+
+  await prisma.absensi.createMany({ data: absensiData });
 }
 
 main()
