@@ -53,12 +53,15 @@ export function NavigationFeedback() {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 z-[80] no-print">
-      <div className="h-1 w-full overflow-hidden bg-orange-100">
-        <div className="navigation-progress h-full bg-[#F97316]" />
+      <div className="h-0.5 w-full overflow-hidden bg-transparent">
+        <div className="navigation-progress h-full bg-gradient-to-r from-orange-300 via-orange-500 to-orange-400" />
       </div>
-      <div className="mx-auto mt-3 flex w-fit items-center gap-2 rounded-full border border-orange-200 bg-white/95 px-3 py-2 text-xs font-medium text-[#c2410c] shadow-subtle backdrop-blur">
-        <span className="h-2 w-2 rounded-full bg-[#F97316] motion-safe:animate-pulse" />
-        Memuat halaman
+      <div className="mx-auto mt-4 flex w-fit items-center gap-3 rounded-2xl border border-neutral-200/80 bg-white/95 px-4 py-3 text-sm font-semibold text-neutral-800 shadow-card backdrop-blur">
+        <span className="relative grid h-8 w-8 place-items-center rounded-xl bg-orange-50">
+          <span className="absolute h-5 w-5 rounded-full border-2 border-orange-100" />
+          <span className="absolute h-5 w-5 rounded-full border-2 border-transparent border-t-orange-500 motion-safe:animate-spin" />
+        </span>
+        <span>Memuat</span>
       </div>
     </div>
   );

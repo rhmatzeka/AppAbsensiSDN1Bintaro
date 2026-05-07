@@ -1,28 +1,26 @@
 import Image from "next/image";
 import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export function LoadingPanel({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="grid min-h-[55vh] place-items-center">
-      <div className="w-full max-w-3xl rounded-xl border border-neutral-200 bg-white p-5 shadow-subtle">
-        <div className="flex items-center gap-4">
-          <Image src={logoSdnBintaro} alt="Logo SDN 1 Bintaro" width={56} height={56} className="h-14 w-14 shrink-0 object-contain motion-safe:animate-pulse" priority />
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-neutral-950">Memuat data</p>
-            <p className="mt-1 text-sm text-neutral-500">Sebentar, sistem sedang menyiapkan tampilan.</p>
+    <div className="grid min-h-[60vh] place-items-center px-4">
+      <div className="flex animate-fade-in flex-col items-center text-center">
+        <div className="relative grid h-24 w-24 place-items-center">
+          <div className="absolute inset-0 rounded-full border-4 border-orange-100" />
+          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-orange-500 motion-safe:animate-spin" />
+          <div className="grid h-16 w-16 place-items-center rounded-2xl bg-white shadow-card">
+            <Image src={logoSdnBintaro} alt="Logo SDN 1 Bintaro" width={42} height={42} className="h-[42px] w-[42px] object-contain" priority />
           </div>
         </div>
+        <p className="mt-5 text-sm font-bold text-neutral-900">Memuat data</p>
+        <p className="mt-1 max-w-xs text-sm leading-relaxed text-neutral-500">
+          {compact ? "Mengambil data terbaru." : "Sebentar, sistem sedang menyiapkan tampilan."}
+        </p>
         {compact ? null : (
-          <div className="mt-6 space-y-3">
-            <Skeleton className="h-4 w-2/3" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
-            <div className="grid gap-3 pt-2 sm:grid-cols-3">
-              <Skeleton className="h-20" />
-              <Skeleton className="h-20" />
-              <Skeleton className="h-20" />
-            </div>
+          <div className="mt-5 flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-orange-500 motion-safe:animate-bounce" />
+            <span className="h-2 w-2 rounded-full bg-orange-400 motion-safe:animate-bounce [animation-delay:120ms]" />
+            <span className="h-2 w-2 rounded-full bg-orange-300 motion-safe:animate-bounce [animation-delay:240ms]" />
           </div>
         )}
       </div>

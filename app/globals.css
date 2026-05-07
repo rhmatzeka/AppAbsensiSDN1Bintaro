@@ -3,12 +3,23 @@
 @plugin "@tailwindcss/forms";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #171717;
-  --surface: #fafafa;
-  --muted: #737373;
-  --border: #e5e5e5;
-  --orange: #f97316;
+  --background: #F8F9FC;
+  --foreground: #1A1D26;
+  --surface: #FFFFFF;
+  --surface-alt: #F3F4F8;
+  --muted: #6B7280;
+  --border: #E5E7EB;
+  --border-light: #F0F1F3;
+  --orange: #F97316;
+  --orange-light: #FFF7ED;
+  --orange-glow: rgb(249 115 22 / 0.12);
+  --success: #10B981;
+  --danger: #F43F5E;
+  --info: #0EA5E9;
+  --warning: #F59E0B;
+  --radius: 0.875rem;
+  --radius-lg: 1rem;
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.04);
 }
 
 * {
@@ -23,22 +34,51 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* Smooth transitions for interactive elements */
 button,
 a,
 input,
 select,
 textarea {
-  transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease, box-shadow 150ms ease, opacity 150ms ease;
+  transition: border-color 200ms ease, background-color 200ms ease, color 200ms ease, box-shadow 200ms ease, opacity 200ms ease, transform 150ms ease;
 }
 
+/* Card hover lift */
+.card-interactive {
+  transition: box-shadow 250ms ease, transform 250ms ease, border-color 250ms ease;
+}
+.card-interactive:hover {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.08), 0 16px 40px rgb(0 0 0 / 0.06);
+  transform: translateY(-2px);
+}
+
+/* Login background pattern */
+.login-bg {
+  background-color: #F8F9FC;
+  background-image:
+    radial-gradient(circle at 20% 35%, rgb(249 115 22 / 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 65%, rgb(16 185 129 / 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 50% 90%, rgb(14 165 233 / 0.04) 0%, transparent 50%);
+}
+
+/* Login card pattern decorative dots */
+.login-pattern {
+  background-image: radial-gradient(circle, rgb(249 115 22 / 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Navigation progress bar */
 .navigation-progress {
   width: 45%;
   transform-origin: left;
   animation: navigation-progress 1.1s ease-in-out infinite;
 }
 
+/* Skeleton shimmer */
 .skeleton-shimmer {
   position: relative;
   overflow: hidden;
@@ -49,8 +89,54 @@ textarea {
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.65), transparent);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.7), transparent);
   animation: skeleton-shimmer 1.35s ease-in-out infinite;
+}
+
+/* Staggered animation for cards */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+
+/* Gradient text utility */
+.text-gradient-orange {
+  background: linear-gradient(135deg, #F97316, #EA580C);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Active nav indicator */
+.nav-active-indicator {
+  position: relative;
+}
+.nav-active-indicator::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  border-radius: 0 4px 4px 0;
+  background: var(--orange);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(0 0 0 / 0.12);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(0 0 0 / 0.2);
 }
 
 @keyframes navigation-progress {

@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useMemo, useState } from "react";
 import { CheckCircle2, AlertCircle, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 type ToastType = "success" | "error";
 type Toast = {
@@ -35,14 +34,28 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className="fixed right-4 top-4 z-[60] flex w-[min(360px,calc(100vw-32px))] flex-col gap-2">
+      <div className="fixed right-4 top-4 z-[60] flex w-[min(380px,calc(100vw-32px))] flex-col gap-2.5">
         {toasts.map((toast) => (
-          <div key={toast.id} className="flex items-start gap-3 rounded-xl border border-neutral-200 bg-white p-3 shadow-subtle">
-            {toast.type === "success" ? <CheckCircle2 className="mt-0.5 h-5 w-5 text-[#4CAF81]" /> : <AlertCircle className="mt-0.5 h-5 w-5 text-[#E05252]" />}
-            <p className="flex-1 text-sm text-neutral-800">{toast.message}</p>
-            <Button type="button" variant="ghost" className="h-7 w-7 px-0" onClick={() => setToasts((current) => current.filter((item) => item.id !== toast.id))} aria-label="Tutup toast">
-              <X className="h-4 w-4" />
-            </Button>
+          <div
+            key={toast.id}
+            className={`flex items-start gap-3 rounded-2xl border bg-white p-4 shadow-card animate-slide-in-right ${
+              toast.type === "success" ? "border-emerald-200/60" : "border-rose-200/60"
+            }`}
+          >
+            <div className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full ${
+              toast.type === "success" ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"
+            }`}>
+              {toast.type === "success" ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+            </div>
+            <p className="flex-1 text-sm font-medium text-neutral-700">{toast.message}</p>
+            <button
+              type="button"
+              className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+              onClick={() => setToasts((current) => current.filter((item) => item.id !== toast.id))}
+              aria-label="Tutup toast"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
           </div>
         ))}
       </div>

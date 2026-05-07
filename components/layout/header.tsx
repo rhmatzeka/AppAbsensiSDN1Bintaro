@@ -2,28 +2,35 @@
 
 import { signOut, useSession } from "next-auth/react";
 import { LogOut } from "lucide-react";
-import Image from "next/image";
-import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
-import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 
 export function Header() {
   const { data } = useSession();
+  const userName = data?.user?.name ?? "Pengguna";
 
   return (
-    <header className="no-print sticky top-0 z-30 border-b border-neutral-200 bg-[#FAFAFA]/95 px-3 py-3 backdrop-blur sm:px-4 md:px-6">
+    <header className="no-print sticky top-0 z-30 border-b border-neutral-200/80 bg-white/90 px-4 py-3 backdrop-blur-lg sm:px-5 md:px-6">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex min-w-0 items-center gap-3">
-          <Image src={logoSdnBintaro} alt="Logo SDN 1 Bintaro" width={48} height={48} className="h-12 w-12 shrink-0 object-contain" priority />
-          <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-neutral-950">{data?.user?.name ?? "Pengguna"}</p>
-            <p className="truncate text-xs text-neutral-500">{formatDate(new Date())}</p>
-          </div>
+        {/* Left: greeting */}
+        <div className="min-w-0">
+          <p className="text-xs font-medium text-neutral-400">{formatDate(new Date())}</p>
+          <h2 className="mt-0.5 truncate text-sm font-bold text-neutral-900">
+            Selamat datang, {userName} 👋
+          </h2>
         </div>
-        <Button type="button" variant="secondary" className="h-11 w-11 shrink-0 px-0 sm:h-10 sm:w-auto sm:px-4" onClick={() => void signOut({ callbackUrl: "/login" })} aria-label="Keluar">
-          <LogOut className="h-4 w-4" />
-          <span className="hidden sm:inline">Keluar</span>
-        </Button>
+
+        {/* Right: logout */}
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-neutral-800"
+            onClick={() => void signOut({ callbackUrl: "/login" })}
+            aria-label="Keluar"
+          >
+            <LogOut className="h-4 w-4" />
+            <span className="hidden sm:inline">Keluar</span>
+          </button>
+        </div>
       </div>
     </header>
   );

@@ -40,36 +40,48 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="grid h-[100dvh] overflow-hidden bg-[#0A0A0A] px-4 py-4 sm:place-items-center">
+    <main className="login-bg grid min-h-[100dvh] overflow-hidden px-4 py-4 sm:place-items-center">
       <div className="grid min-h-0 place-items-center overflow-y-auto">
-        <form onSubmit={onSubmit} className="w-full max-w-md rounded-xl bg-[#FAFAFA] p-5 shadow-subtle sm:p-6">
-          <div className="mb-6 text-center sm:mb-7">
-            <Image src={logoSdnBintaro} alt="Logo SDN 1 Bintaro" width={72} height={72} className="mx-auto h-16 w-16 object-contain sm:h-[72px] sm:w-[72px]" priority />
-            <h1 className="mt-4 text-2xl font-semibold text-neutral-950 sm:mt-5">Masuk ke Absensi</h1>
-            <p className="mt-1 text-sm text-neutral-500">Gunakan akun sekolah untuk melanjutkan.</p>
-          </div>
-
-          <div className="space-y-4">
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-neutral-700">Email</span>
-              <Input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" />
-            </label>
-
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-neutral-700">Password</span>
-              <div className="relative">
-                <Input type={showPassword ? "text" : "password"} required value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" className="pr-11" />
-                <button type="button" className="absolute right-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-neutral-500 hover:bg-neutral-100" onClick={() => setShowPassword((value) => !value)} aria-label="Toggle password">
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
+        <div className="w-full max-w-[420px] animate-slide-up">
+          {/* Login card */}
+          <form onSubmit={onSubmit} className="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-card sm:p-8">
+            {/* Header */}
+            <div className="mb-8 text-center">
+              <div className="mx-auto grid h-20 w-20 place-items-center rounded-2xl bg-orange-50 shadow-sm">
+                <Image src={logoSdnBintaro} alt="Logo SDN 1 Bintaro" width={56} height={56} className="h-14 w-14 object-contain" priority />
               </div>
-            </label>
-          </div>
+              <h1 className="mt-5 text-xl font-bold text-neutral-900">Masuk ke Absensi</h1>
+              <p className="mt-1.5 text-sm text-neutral-500">SDN 1 Bintaro — Sistem Kehadiran Siswa</p>
+            </div>
 
-          <Button type="submit" className="mt-6 w-full" loading={loading}>
-            Masuk
-          </Button>
-        </form>
+            {/* Fields */}
+            <div className="space-y-4">
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-neutral-700">Email</span>
+                <Input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" placeholder="nama@sekolah.sch.id" />
+              </label>
+
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-neutral-700">Password</span>
+                <div className="relative">
+                  <Input type={showPassword ? "text" : "password"} required value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" className="pr-11" placeholder="Masukkan password" />
+                  <button type="button" className="absolute right-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600" onClick={() => setShowPassword((value) => !value)} aria-label="Toggle password">
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </label>
+            </div>
+
+            <Button type="submit" className="mt-7 w-full h-12 text-[15px]" loading={loading}>
+              Masuk
+            </Button>
+          </form>
+
+          {/* Footer */}
+          <p className="mt-6 text-center text-xs text-neutral-400">
+            © 2024 SDN 1 Bintaro. Aplikasi Absensi Siswa.
+          </p>
+        </div>
       </div>
     </main>
   );

@@ -31,15 +31,15 @@ export default function DetailAbsensiKelasPage() {
             </tr>
           </thead>
           <tbody>
-            {(data ?? []).map((item, index) => (
-              <tr key={item.id} className={index % 2 === 0 ? "bg-white hover:bg-neutral-50" : "bg-neutral-50/60 hover:bg-neutral-100"}>
-                <Td>{formatDate(item.tanggal, "d MMM yyyy")}</Td>
-                <Td className="font-mono text-xs">{item.siswa.nis}</Td>
-                <Td>{item.siswa.nama}</Td>
+            {(data ?? []).map((item) => (
+              <tr key={item.id} className="transition-colors hover:bg-orange-50/30">
+                <Td className="text-neutral-500 text-xs">{formatDate(item.tanggal, "d MMM yyyy")}</Td>
+                <Td className="font-mono text-xs text-neutral-500">{item.siswa.nis}</Td>
+                <Td className="font-medium text-neutral-800">{item.siswa.nama}</Td>
                 <Td>
                   <StatusBadge status={item.status} />
                 </Td>
-                <Td>{item.keterangan ?? "-"}</Td>
+                <Td className="text-neutral-500">{item.keterangan ?? "-"}</Td>
               </tr>
             ))}
           </tbody>
