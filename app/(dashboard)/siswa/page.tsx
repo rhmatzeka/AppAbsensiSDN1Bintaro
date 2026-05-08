@@ -103,16 +103,19 @@ export default function SiswaPage() {
 
       <div className="flex items-center justify-between"><p className="text-sm text-neutral-500">Total <span className="font-semibold text-neutral-700">{data?.total ?? 0}</span> siswa</p><div className="flex gap-2"><Button type="button" variant="secondary" disabled={page <= 1} onClick={() => setPage((v) => v - 1)}>Sebelumnya</Button><Button type="button" variant="secondary" disabled={page >= (data?.pages ?? 1)} onClick={() => setPage((v) => v + 1)}>Berikutnya</Button></div></div>
 
-      <Modal open={open} title={form.id ? "Edit Siswa" : "Tambah Siswa"} onClose={() => setOpen(false)}>
-        <form onSubmit={submit} className="grid gap-4 md:grid-cols-2">
-          <label><span className="mb-2 block text-sm font-semibold text-neutral-700">NIS</span><Input required value={form.nis} onChange={(e) => setForm((c) => ({ ...c, nis: e.target.value }))} /></label>
-          <label><span className="mb-2 block text-sm font-semibold text-neutral-700">Nama</span><Input required value={form.nama} onChange={(e) => setForm((c) => ({ ...c, nama: e.target.value }))} /></label>
-          <label><span className="mb-2 block text-sm font-semibold text-neutral-700">Kelas</span><Select required value={form.kelasId} onChange={(e) => setForm((c) => ({ ...c, kelasId: e.target.value }))}><option value="">Pilih kelas</option>{kelasOptions.map((i) => <option key={i.id} value={i.id}>{i.nama}</option>)}</Select></label>
-          <label><span className="mb-2 block text-sm font-semibold text-neutral-700">Jenis Kelamin</span><Select value={form.jenisKelamin} onChange={(e) => setForm((c) => ({ ...c, jenisKelamin: e.target.value as Gender }))}><option value="LAKI_LAKI">Laki-laki</option><option value="PEREMPUAN">Perempuan</option></Select></label>
-          <label><span className="mb-2 block text-sm font-semibold text-neutral-700">Tanggal Lahir</span><Input type="date" value={form.tanggalLahir} onChange={(e) => setForm((c) => ({ ...c, tanggalLahir: e.target.value }))} /></label>
-          <label><span className="mb-2 block text-sm font-semibold text-neutral-700">Foto URL</span><Input value={form.foto} onChange={(e) => setForm((c) => ({ ...c, foto: e.target.value }))} /></label>
-          <label className="md:col-span-2"><span className="mb-2 block text-sm font-semibold text-neutral-700">Alamat</span><Textarea value={form.alamat} onChange={(e) => setForm((c) => ({ ...c, alamat: e.target.value }))} /></label>
-          <div className="md:col-span-2 flex justify-end gap-2 pt-2"><Button type="button" variant="secondary" onClick={() => setOpen(false)}>Batal</Button><Button type="submit" loading={saving}>Simpan</Button></div>
+      <Modal open={open} title={form.id ? "Edit Siswa" : "Tambah Siswa"} onClose={() => setOpen(false)} className="max-w-3xl">
+        <form onSubmit={submit} className="grid gap-3 sm:grid-cols-2 sm:gap-4">
+          <label className="block"><span className="mb-1.5 block text-sm font-semibold text-neutral-700">NIS</span><Input required value={form.nis} onChange={(e) => setForm((c) => ({ ...c, nis: e.target.value }))} /></label>
+          <label className="block"><span className="mb-1.5 block text-sm font-semibold text-neutral-700">Nama</span><Input required value={form.nama} onChange={(e) => setForm((c) => ({ ...c, nama: e.target.value }))} /></label>
+          <label className="block"><span className="mb-1.5 block text-sm font-semibold text-neutral-700">Kelas</span><Select required value={form.kelasId} onChange={(e) => setForm((c) => ({ ...c, kelasId: e.target.value }))}><option value="">Pilih kelas</option>{kelasOptions.map((i) => <option key={i.id} value={i.id}>{i.nama}</option>)}</Select></label>
+          <label className="block"><span className="mb-1.5 block text-sm font-semibold text-neutral-700">Jenis Kelamin</span><Select value={form.jenisKelamin} onChange={(e) => setForm((c) => ({ ...c, jenisKelamin: e.target.value as Gender }))}><option value="LAKI_LAKI">Laki-laki</option><option value="PEREMPUAN">Perempuan</option></Select></label>
+          <label className="block"><span className="mb-1.5 block text-sm font-semibold text-neutral-700">Tanggal Lahir</span><Input type="date" value={form.tanggalLahir} onChange={(e) => setForm((c) => ({ ...c, tanggalLahir: e.target.value }))} /></label>
+          <label className="block"><span className="mb-1.5 block text-sm font-semibold text-neutral-700">Foto URL</span><Input value={form.foto} onChange={(e) => setForm((c) => ({ ...c, foto: e.target.value }))} placeholder="Opsional" /></label>
+          <label className="block sm:col-span-2"><span className="mb-1.5 block text-sm font-semibold text-neutral-700">Alamat</span><Textarea value={form.alamat} onChange={(e) => setForm((c) => ({ ...c, alamat: e.target.value }))} className="min-h-20" placeholder="Opsional" /></label>
+          <div className="sticky bottom-0 -mx-5 -mb-5 flex justify-end gap-2 border-t border-neutral-100 bg-white/95 px-5 py-4 backdrop-blur sm:col-span-2 sm:static sm:m-0 sm:border-0 sm:bg-transparent sm:p-0 sm:pt-2 sm:backdrop-blur-none">
+            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Batal</Button>
+            <Button type="submit" loading={saving}>Simpan</Button>
+          </div>
         </form>
       </Modal>
     </PageShell>
