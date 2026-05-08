@@ -1,7 +1,8 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 
 type ModalProps = {
@@ -13,23 +14,30 @@ type ModalProps = {
 };
 
 export function Modal({ open, title, children, onClose, className }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
     if (open) {
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
     }
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
     };
   }, [open]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4" role="dialog" aria-modal="true">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className={cn("relative flex max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl animate-slide-up sm:max-h-[92vh]", className)}>
+      <div className={cn("relative flex h-[calc(100dvh-1.5rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl animate-slide-up sm:h-auto sm:max-h-[92vh]", className)}>
         <div className="flex shrink-0 items-center justify-between gap-4 border-b border-neutral-100 px-5 py-4 sm:px-6">
           <h2 className="text-lg font-bold text-neutral-900">{title}</h2>
           <button
@@ -45,6 +53,7 @@ export function Modal({ open, title, children, onClose, className }: ModalProps)
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
