@@ -47,15 +47,16 @@ export default function DashboardPage() {
     >
       {/* Stat Cards */}
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+        <div className="grid grid-cols-4 gap-2 sm:gap-4">
           {[1, 2, 3, 4].map((item) => (
-            <Skeleton key={item} className="h-32 sm:h-28" />
+            <Skeleton key={item} className="h-24 sm:h-28" />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+        <div className="grid grid-cols-4 gap-2 sm:gap-4">
           <StatCard
             label="Total Siswa"
+            mobileLabel="Siswa"
             value={data?.cards.totalSiswa ?? 0}
             icon={<Users className="h-5 w-5" />}
             color="blue"
@@ -63,6 +64,7 @@ export default function DashboardPage() {
           />
           <StatCard
             label="Hadir Hari Ini"
+            mobileLabel="Hadir"
             value={data?.cards.hadirHariIni ?? 0}
             icon={<UserCheck className="h-5 w-5" />}
             color="green"
@@ -70,6 +72,7 @@ export default function DashboardPage() {
           />
           <StatCard
             label="Tidak Hadir"
+            mobileLabel="Absen"
             value={data?.cards.tidakHadir ?? 0}
             icon={<UserX className="h-5 w-5" />}
             color="red"
@@ -77,6 +80,7 @@ export default function DashboardPage() {
           />
           <StatCard
             label="Persentase Kehadiran"
+            mobileLabel="% Hadir"
             value={`${data?.cards.persentase ?? 0}%`}
             icon={<TrendingUp className="h-5 w-5" />}
             color="orange"
@@ -127,7 +131,7 @@ export default function DashboardPage() {
   );
 }
 
-function StatCard({ label, value, icon, color, delay }: { label: string; value: number | string; icon: React.ReactNode; color: "blue" | "green" | "red" | "orange"; delay?: string }) {
+function StatCard({ label, mobileLabel, value, icon, color, delay }: { label: string; mobileLabel: string; value: number | string; icon: React.ReactNode; color: "blue" | "green" | "red" | "orange"; delay?: string }) {
   const colors = {
     blue: { bg: "bg-sky-50", text: "text-sky-600", accent: "from-sky-500/10" },
     green: { bg: "bg-emerald-50", text: "text-emerald-600", accent: "from-emerald-500/10" },
@@ -137,16 +141,19 @@ function StatCard({ label, value, icon, color, delay }: { label: string; value: 
   const c = colors[color];
 
   return (
-    <div className={`card-interactive relative min-h-32 overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-subtle animate-fade-in sm:min-h-28 sm:p-5 ${delay ?? ""}`}>
+    <div className={`card-interactive relative min-h-24 overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-2.5 shadow-subtle animate-fade-in sm:min-h-28 sm:p-5 ${delay ?? ""}`}>
       <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${c.accent} to-transparent`} />
-      <div className="flex h-full flex-col justify-between gap-4">
-        <div className="flex items-start justify-between gap-2">
-          <p className="min-w-0 text-[11px] font-bold uppercase leading-4 text-neutral-400 sm:text-xs">{label}</p>
-          <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl sm:h-11 sm:w-11 ${c.bg} ${c.text}`}>
+      <div className="flex h-full flex-col justify-between gap-3">
+        <div className="flex items-start justify-between gap-1.5">
+          <p className="min-w-0 text-[10px] font-bold uppercase leading-3 text-neutral-400 sm:text-xs sm:leading-4">
+            <span className="sm:hidden">{mobileLabel}</span>
+            <span className="hidden sm:inline">{label}</span>
+          </p>
+          <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-xl sm:h-11 sm:w-11 ${c.bg} ${c.text}`}>
             {icon}
           </div>
         </div>
-        <p className="text-[34px] font-black leading-none text-neutral-900 sm:text-3xl">{value}</p>
+        <p className="text-2xl font-black leading-none text-neutral-900 sm:text-3xl">{value}</p>
       </div>
     </div>
   );
