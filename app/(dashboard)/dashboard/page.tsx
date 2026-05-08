@@ -139,22 +139,29 @@ function StatCard({ label, mobileLabel, value, icon, color, delay }: { label: st
     orange: { bg: "bg-orange-50", text: "text-orange-600", accent: "from-orange-500/10" }
   };
   const c = colors[color];
-  const compactValue = String(value).length >= 4;
 
   return (
     <div className={`card-interactive relative min-h-24 overflow-hidden rounded-2xl border border-neutral-200/80 bg-white px-2 py-2.5 shadow-subtle animate-fade-in sm:min-h-28 sm:p-5 ${delay ?? ""}`}>
       <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${c.accent} to-transparent`} />
-      <div className="flex h-full flex-col items-center justify-between gap-2 text-center sm:items-stretch sm:gap-3 sm:text-left">
-        <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-xl sm:h-11 sm:w-11 sm:self-end ${c.bg} ${c.text}`}>
+
+      <div className="flex h-full flex-col items-center justify-between gap-2 text-center sm:hidden">
+        <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-xl ${c.bg} ${c.text}`}>
           {icon}
         </div>
         <p className="w-full min-w-0 text-[9px] font-bold uppercase leading-3 text-neutral-400 sm:text-xs sm:leading-4">
-          <span className="sm:hidden">{mobileLabel}</span>
-          <span className="hidden sm:inline">{label}</span>
+          {mobileLabel}
         </p>
-        <p className={`w-full whitespace-nowrap font-black leading-none text-neutral-900 ${compactValue ? "text-[19px] sm:text-2xl md:text-3xl" : "text-[24px] sm:text-3xl"}`}>
-          {value}
-        </p>
+        <p className="w-full whitespace-nowrap text-[22px] font-black leading-none text-neutral-900">{value}</p>
+      </div>
+
+      <div className="hidden h-full items-start justify-between gap-3 sm:flex">
+        <div className="min-w-0 pt-0.5">
+          <p className="text-xs font-semibold uppercase leading-4 text-neutral-400">{label}</p>
+          <p className="mt-3 text-3xl font-bold leading-none text-neutral-900">{value}</p>
+        </div>
+        <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${c.bg} ${c.text}`}>
+          {icon}
+        </div>
       </div>
     </div>
   );
