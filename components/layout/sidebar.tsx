@@ -79,13 +79,6 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* Footer */}
-        <div className="mt-auto px-2">
-          <div className={cn("rounded-xl bg-gradient-to-br from-orange-50 to-orange-100/50 p-3", collapsed && "hidden")}>
-            <p className="text-xs font-semibold text-orange-800">Tahun Ajar</p>
-            <p className="mt-0.5 text-xs text-orange-600">2024/2025</p>
-          </div>
-        </div>
       </div>
     </aside>
   );
