@@ -10,8 +10,13 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "App Absensi — SDN Bintaro 01",
-  description: "Sistem absensi siswa digital SDN Bintaro 01. Kelola kehadiran, data siswa, dan laporan bulanan."
+  title: "App Absensi SDN Bintaro 01",
+  description: "Sistem absensi siswa digital SDN Bintaro 01. Kelola kehadiran, data siswa, dan laporan bulanan.",
+  icons: {
+    icon: [{ url: "/logo-sdn-bintaro.png", type: "image/png" }],
+    shortcut: [{ url: "/logo-sdn-bintaro.png", type: "image/png" }],
+    apple: [{ url: "/logo-sdn-bintaro.png", type: "image/png" }]
+  }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
