@@ -3,12 +3,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { BarChart3, CalendarCheck, GraduationCap, LayoutDashboard, PanelLeftClose, PanelLeftOpen, X, Users } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { BarChart3, CalendarCheck, ClipboardList, GraduationCap, LayoutDashboard, PanelLeftClose, PanelLeftOpen, UserCog, X, Users } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
 
-const items = [
+const baseItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/absensi", label: "Absensi", icon: CalendarCheck },
   { href: "/siswa", label: "Siswa", icon: Users },
@@ -16,9 +17,20 @@ const items = [
   { href: "/laporan", label: "Laporan", icon: BarChart3 }
 ];
 
+const adminItems = [
+  { href: "/pengguna", label: "Pengguna", icon: UserCog },
+  { href: "/log-guru", label: "Log Guru", icon: ClipboardList }
+];
+
+function useNavigationItems() {
+  const { data } = useSession();
+  return data?.user.role === "ADMIN" ? [...baseItems, ...adminItems] : baseItems;
+}
+
 export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const items = useNavigationItems();
 
   return (
     <aside className={cn("no-print sticky top-0 hidden h-screen shrink-0 border-r border-neutral-200/80 bg-white p-3 md:block", collapsed ? "w-[76px]" : "w-[260px]")}>
@@ -86,6 +98,7 @@ export function Sidebar() {
 
 export function MobileSidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const pathname = usePathname();
+  const items = useNavigationItems();
 
   return (
     <div className={cn("fixed inset-0 z-50 md:hidden", open ? "pointer-events-auto" : "pointer-events-none")} aria-hidden={!open}>
@@ -148,10 +161,11 @@ export function MobileSidebar({ open, onClose }: { open: boolean; onClose: () =>
 
 export function MobileBottomNav() {
   const pathname = usePathname();
+  const items = useNavigationItems();
 
   return (
     <nav className="no-print fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200/80 bg-white/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-4px_16px_rgb(0_0_0_/_0.06)] backdrop-blur-lg md:hidden">
-      <div className="mx-auto grid max-w-lg grid-cols-5 gap-0.5">
+      <div className="mx-auto grid max-w-lg gap-0.5" style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}>
         {items.map((item) => {
           const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
           const Icon = item.icon;

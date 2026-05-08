@@ -72,3 +72,39 @@ export type RekapRow = {
   ALPHA: number;
   persentase: number;
 };
+
+export type UserRow = {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  kelasId: string | null;
+  createdAt: string;
+  kelas: {
+    id: string;
+    nama: string;
+  } | null;
+};
+
+export type GuruLogRow = {
+  id: string;
+  tanggal: string;
+  status: AttendanceStatus;
+  keterangan: string | null;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  siswa: {
+    id: string;
+    nis: string;
+    nama: string;
+  };
+  kelas: {
+    id: string;
+    nama: string;
+  };
+};
