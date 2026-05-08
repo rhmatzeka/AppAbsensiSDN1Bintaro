@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
 
 const baseItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Dashboard", shortLabel: "Dasbor", icon: LayoutDashboard },
   { href: "/absensi", label: "Absensi", icon: CalendarCheck },
   { href: "/siswa", label: "Siswa", icon: Users },
   { href: "/kelas", label: "Kelas", icon: GraduationCap },
@@ -156,39 +156,5 @@ export function MobileSidebar({ open, onClose }: { open: boolean; onClose: () =>
         </nav>
       </aside>
     </div>
-  );
-}
-
-export function MobileBottomNav() {
-  const pathname = usePathname();
-  const items = useNavigationItems();
-
-  return (
-    <nav className="no-print fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200/80 bg-white/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-4px_16px_rgb(0_0_0_/_0.06)] backdrop-blur-lg md:hidden">
-      <div className="mx-auto grid max-w-lg gap-0.5" style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}>
-        {items.map((item) => {
-          const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl px-1 text-[10px] font-semibold text-neutral-400 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-orange-400",
-                active && "text-orange-600"
-              )}
-            >
-              <div className={cn(
-                "grid h-7 w-7 place-items-center rounded-lg transition-colors",
-                active && "bg-orange-100"
-              )}>
-                <Icon className="h-4.5 w-4.5" />
-              </div>
-              <span className="max-w-full truncate">{item.label}</span>
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
   );
 }

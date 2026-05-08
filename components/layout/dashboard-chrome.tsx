@@ -1,7 +1,7 @@
 "use client";
 
 import { Header } from "@/components/layout/header";
-import { MobileBottomNav, Sidebar } from "@/components/layout/sidebar";
+import { Sidebar } from "@/components/layout/sidebar";
 
 export function DashboardChrome({ children }: { children: React.ReactNode }) {
   return (
@@ -9,9 +9,8 @@ export function DashboardChrome({ children }: { children: React.ReactNode }) {
       <Sidebar />
       <div className="min-w-0 flex-1">
         <Header />
-        <main className="pb-24 pl-4 pr-4 pt-5 sm:p-5 md:p-6 lg:p-8">{children}</main>
+        <main className="pb-6 pl-4 pr-4 pt-5 sm:p-5 md:p-6 lg:p-8">{children}</main>
       </div>
-      <MobileBottomNav />
     </div>
   );
 }
