@@ -141,19 +141,17 @@ function StatCard({ label, mobileLabel, value, icon, color, delay }: { label: st
   const c = colors[color];
 
   return (
-    <div className={`card-interactive relative min-h-24 overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-2.5 shadow-subtle animate-fade-in sm:min-h-28 sm:p-5 ${delay ?? ""}`}>
+    <div className={`card-interactive relative min-h-24 overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-2 shadow-subtle animate-fade-in sm:min-h-28 sm:p-5 ${delay ?? ""}`}>
       <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${c.accent} to-transparent`} />
-      <div className="flex h-full flex-col justify-between gap-3">
-        <div className="flex items-start justify-between gap-1.5">
-          <p className="min-w-0 text-[10px] font-bold uppercase leading-3 text-neutral-400 sm:text-xs sm:leading-4">
+      <div className="flex h-full flex-col items-center justify-between gap-1.5 text-center sm:items-stretch sm:gap-3 sm:text-left">
+        <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-xl sm:h-11 sm:w-11 sm:self-end ${c.bg} ${c.text}`}>
+          {icon}
+        </div>
+        <p className="w-full min-w-0 text-[9px] font-bold uppercase leading-3 text-neutral-400 sm:text-xs sm:leading-4">
             <span className="sm:hidden">{mobileLabel}</span>
             <span className="hidden sm:inline">{label}</span>
-          </p>
-          <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-xl sm:h-11 sm:w-11 ${c.bg} ${c.text}`}>
-            {icon}
-          </div>
-        </div>
-        <p className="text-2xl font-black leading-none text-neutral-900 sm:text-3xl">{value}</p>
+        </p>
+        <p className="w-full whitespace-nowrap text-[22px] font-black leading-none text-neutral-900 sm:text-3xl">{value}</p>
       </div>
     </div>
   );
