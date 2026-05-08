@@ -77,7 +77,7 @@ export default function LoginPage() {
 
           {/* Footer */}
           <p className="mt-6 text-center text-xs text-neutral-400">
-            © 2024 SDN Bintaro 01. Aplikasi Absensi Siswa.
+            © 2026 SDN Bintaro 01. Aplikasi Absensi Siswa.
           </p>
         </div>
       </div>
