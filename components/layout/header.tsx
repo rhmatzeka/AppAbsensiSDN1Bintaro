@@ -9,6 +9,7 @@ import { formatDate } from "@/lib/utils";
 export function Header() {
   const { data } = useSession();
   const userName = data?.user?.name ?? "Pengguna";
+  const shortName = userName.split(" ").filter(Boolean)[0] ?? "Pengguna";
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -27,8 +28,9 @@ export function Header() {
 
             <div className="min-w-0">
               <p className="text-xs font-medium text-neutral-400">{formatDate(new Date())}</p>
-              <h2 className="mt-0.5 truncate text-sm font-bold text-neutral-900">
-                Selamat datang, {userName}
+              <h2 className="mt-0.5 text-sm font-bold text-neutral-900">
+                <span className="block truncate sm:hidden">Halo, {shortName}</span>
+                <span className="hidden truncate sm:block">Selamat datang, {userName}</span>
               </h2>
             </div>
           </div>
