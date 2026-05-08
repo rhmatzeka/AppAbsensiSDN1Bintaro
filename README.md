@@ -1,4 +1,4 @@
-# App Absensi SDN 1 Bintaro
+# App Absensi SDN Bintaro 01
 
 Aplikasi absensi siswa berbasis web untuk mengelola data kelas, siswa, input absensi harian, rekap bulanan, dan laporan kehadiran.
 
@@ -85,7 +85,7 @@ http://localhost:3000
 Admin:
 
 ```txt
-admin@sekolah.sch.id
+matsganz@gmail.com
 admin123
 ```
 

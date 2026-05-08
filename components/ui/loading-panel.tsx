@@ -8,9 +8,7 @@ export function LoadingPanel({ compact = false }: { compact?: boolean }) {
         <div className="relative grid h-24 w-24 place-items-center">
           <div className="absolute inset-0 rounded-full border-4 border-orange-100" />
           <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-orange-500 motion-safe:animate-spin" />
-          <div className="grid h-16 w-16 place-items-center rounded-2xl bg-white shadow-card">
-            <Image src={logoSdnBintaro} alt="Logo SDN 1 Bintaro" width={42} height={42} className="h-[42px] w-[42px] object-contain" priority />
-          </div>
+          <Image src={logoSdnBintaro} alt="Logo SDN Bintaro 01" width={56} height={56} className="h-14 w-14 object-contain" priority />
         </div>
         <p className="mt-5 text-sm font-bold text-neutral-900">Memuat data</p>
         <p className="mt-1 max-w-xs text-sm leading-relaxed text-neutral-500">

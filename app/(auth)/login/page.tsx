@@ -14,7 +14,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { showToast } = useToast();
-  const [email, setEmail] = useState("admin@sekolah.sch.id");
+  const [email, setEmail] = useState("matsganz@gmail.com");
   const [password, setPassword] = useState("admin123");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ export default function LoginPage() {
       email,
       password,
       redirect: false,
-      callbackUrl: searchParams.get("callbackUrl") ?? "/"
+      callbackUrl: searchParams.get("callbackUrl") ?? "/dashboard"
     });
     setLoading(false);
 
@@ -35,7 +35,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push(result?.url ?? "/");
+    router.push(result?.url ?? "/dashboard");
     router.refresh();
   }
 
@@ -47,11 +47,9 @@ export default function LoginPage() {
           <form onSubmit={onSubmit} className="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-card sm:p-8">
             {/* Header */}
             <div className="mb-8 text-center">
-              <div className="mx-auto grid h-20 w-20 place-items-center rounded-2xl bg-orange-50 shadow-sm">
-                <Image src={logoSdnBintaro} alt="Logo SDN 1 Bintaro" width={56} height={56} className="h-14 w-14 object-contain" priority />
-              </div>
+              <Image src={logoSdnBintaro} alt="Logo SDN Bintaro 01" width={80} height={80} className="mx-auto h-20 w-20 object-contain" priority />
               <h1 className="mt-5 text-xl font-bold text-neutral-900">Masuk ke Absensi</h1>
-              <p className="mt-1.5 text-sm text-neutral-500">SDN 1 Bintaro — Sistem Kehadiran Siswa</p>
+              <p className="mt-1.5 text-sm text-neutral-500">SDN Bintaro 01 — Sistem Kehadiran Siswa</p>
             </div>
 
             {/* Fields */}
@@ -79,7 +77,7 @@ export default function LoginPage() {
 
           {/* Footer */}
           <p className="mt-6 text-center text-xs text-neutral-400">
-            © 2024 SDN 1 Bintaro. Aplikasi Absensi Siswa.
+            © 2024 SDN Bintaro 01. Aplikasi Absensi Siswa.
           </p>
         </div>
       </div>

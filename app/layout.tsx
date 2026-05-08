@@ -10,8 +10,8 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "App Absensi — SDN 1 Bintaro",
-  description: "Sistem absensi siswa digital SDN 1 Bintaro. Kelola kehadiran, data siswa, dan laporan bulanan."
+  title: "App Absensi — SDN Bintaro 01",
+  description: "Sistem absensi siswa digital SDN Bintaro 01. Kelola kehadiran, data siswa, dan laporan bulanan."
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

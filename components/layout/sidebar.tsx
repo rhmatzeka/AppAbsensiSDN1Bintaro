@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
 
 const items = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/absensi", label: "Absensi", icon: CalendarCheck },
   { href: "/siswa", label: "Siswa", icon: Users },
   { href: "/kelas", label: "Kelas", icon: GraduationCap },
@@ -25,13 +25,11 @@ export function Sidebar() {
       <div className="flex h-full flex-col">
         {/* Logo */}
         <div className="mb-2 flex items-center justify-between gap-2 px-2 py-1">
-          <Link href="/" className="flex min-w-0 items-center gap-3">
-            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-orange-50">
-              <Image src={logoSdnBintaro} alt="Logo SDN 1 Bintaro" width={32} height={32} className="h-8 w-8 object-contain" />
-            </div>
+          <Link href="/dashboard" className="flex min-w-0 items-center gap-3">
+            <Image src={logoSdnBintaro} alt="Logo SDN Bintaro 01" width={40} height={40} className="h-10 w-10 shrink-0 object-contain" />
             {!collapsed ? (
               <div className="min-w-0">
-                <span className="block truncate text-sm font-bold text-neutral-900">SDN 1 Bintaro</span>
+                <span className="block truncate text-sm font-bold text-neutral-900">SDN Bintaro 01</span>
                 <span className="block truncate text-[11px] text-neutral-400">Sistem Absensi</span>
               </div>
             ) : null}
@@ -106,12 +104,10 @@ export function MobileSidebar({ open, onClose }: { open: boolean; onClose: () =>
       />
       <aside className={cn("absolute left-0 top-0 h-full w-[min(300px,85vw)] bg-white p-4 shadow-xl transition-transform duration-200 ease-out", open ? "translate-x-0" : "-translate-x-full")}>
         <div className="mb-6 flex items-center justify-between gap-3">
-          <Link href="/" className="flex min-w-0 items-center gap-3" onClick={onClose}>
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-orange-50">
-              <Image src={logoSdnBintaro} alt="Logo SDN 1 Bintaro" width={36} height={36} className="h-9 w-9 object-contain" />
-            </div>
+          <Link href="/dashboard" className="flex min-w-0 items-center gap-3" onClick={onClose}>
+            <Image src={logoSdnBintaro} alt="Logo SDN Bintaro 01" width={48} height={48} className="h-12 w-12 shrink-0 object-contain" />
             <div className="min-w-0">
-              <p className="truncate text-sm font-bold text-neutral-900">SDN 1 Bintaro</p>
+              <p className="truncate text-sm font-bold text-neutral-900">SDN Bintaro 01</p>
               <p className="truncate text-xs text-neutral-400">Sistem Absensi</p>
             </div>
           </Link>
