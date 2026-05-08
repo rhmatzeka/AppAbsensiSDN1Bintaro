@@ -127,7 +127,7 @@ export default function AbsensiPage() {
       </div>
 
       {/* Summary */}
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-4 gap-2 sm:gap-4">
         <SummaryCard label="Hadir" value={summary.HADIR} color="green" />
         <SummaryCard label="Sakit" value={summary.SAKIT} color="blue" />
         <SummaryCard label="Izin" value={summary.IZIN} color="amber" />

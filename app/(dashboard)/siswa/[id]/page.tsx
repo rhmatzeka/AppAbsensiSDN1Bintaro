@@ -67,12 +67,12 @@ export default function DetailSiswaPage() {
         </section>
 
         <section className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-5">
+          <div className="grid grid-cols-5 gap-2 sm:gap-4">
             <SummaryCard label="Hadir" value={counts.HADIR} color="green" />
             <SummaryCard label="Sakit" value={counts.SAKIT} color="blue" />
             <SummaryCard label="Izin" value={counts.IZIN} color="amber" />
             <SummaryCard label="Alpha" value={counts.ALPHA} color="red" />
-            <SummaryCard label="Kehadiran" value={`${pct}%`} color="orange" />
+            <SummaryCard label="Kehadiran" mobileLabel="% Hadir" value={`${pct}%`} color="orange" />
           </div>
 
           <label className="block max-w-xs">
