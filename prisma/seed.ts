@@ -165,7 +165,7 @@ async function main() {
   const guruPassword = await bcrypt.hash("guru123", 12);
 
   const admin = await prisma.user.create({
-    data: { name: "Rahmat Eka Satria", email: "matsganz@gmail.com", password: adminPassword, role: Role.ADMIN }
+    data: { name: "Operator Sekolah", email: "admin@sekolah.sch.id", password: adminPassword, role: Role.ADMIN }
   });
 
   const teachers = await Promise.all(

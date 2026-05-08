@@ -85,7 +85,7 @@ http://localhost:3000
 Admin:
 
 ```txt
-matsganz@gmail.com
+admin@sekolah.sch.id
 admin123
 ```
 
