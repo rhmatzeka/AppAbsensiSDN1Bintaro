@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Edit2, Eye, Plus, Search, Trash2, Upload } from "lucide-react";
@@ -19,6 +20,7 @@ import type { Gender, SiswaRow } from "@/types";
 
 type SiswaForm = { id?: string; nis: string; nama: string; jenisKelamin: Gender; tanggalLahir: string; alamat: string; foto: string; kelasId: string };
 const emptyForm: SiswaForm = { nis: "", nama: "", jenisKelamin: "LAKI_LAKI", tanggalLahir: "", alamat: "", foto: "", kelasId: "" };
+const maxPhotoSize = 2 * 1024 * 1024;
 
 export default function SiswaPage() {
   const { showToast } = useToast();
@@ -37,6 +39,41 @@ export default function SiswaPage() {
 
   function openCreate() { setForm({ ...emptyForm, kelasId: kelasOptions[0]?.id ?? "" }); setOpen(true); }
   function openEdit(s: SiswaRow) { setForm({ id: s.id, nis: s.nis, nama: s.nama, jenisKelamin: s.jenisKelamin, tanggalLahir: s.tanggalLahir?.slice(0, 10) ?? "", alamat: s.alamat ?? "", foto: s.foto ?? "", kelasId: s.kelasId }); setOpen(true); }
+
+  async function readPhoto(file: File) {
+    if (!file.type.startsWith("image/")) {
+      showToast("File harus berupa gambar", "error");
+      return;
+    }
+    if (file.size > maxPhotoSize) {
+      showToast("Ukuran foto maksimal 2MB", "error");
+      return;
+    }
+
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new window.Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = dataUrl;
+    });
+
+    const maxSize = 512;
+    const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(image.width * scale));
+    canvas.height = Math.max(1, Math.round(image.height * scale));
+    const context = canvas.getContext("2d");
+    context?.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    setForm((current) => ({ ...current, foto: canvas.toDataURL("image/jpeg", 0.82) }));
+  }
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -110,7 +147,31 @@ export default function SiswaPage() {
           <label className="block"><span className="mb-1.5 block text-sm font-semibold text-neutral-700">Kelas</span><Select required value={form.kelasId} onChange={(e) => setForm((c) => ({ ...c, kelasId: e.target.value }))}><option value="">Pilih kelas</option>{kelasOptions.map((i) => <option key={i.id} value={i.id}>{i.nama}</option>)}</Select></label>
           <label className="block"><span className="mb-1.5 block text-sm font-semibold text-neutral-700">Jenis Kelamin</span><Select value={form.jenisKelamin} onChange={(e) => setForm((c) => ({ ...c, jenisKelamin: e.target.value as Gender }))}><option value="LAKI_LAKI">Laki-laki</option><option value="PEREMPUAN">Perempuan</option></Select></label>
           <label className="block"><span className="mb-1.5 block text-sm font-semibold text-neutral-700">Tanggal Lahir</span><Input type="date" value={form.tanggalLahir} onChange={(e) => setForm((c) => ({ ...c, tanggalLahir: e.target.value }))} /></label>
-          <label className="block"><span className="mb-1.5 block text-sm font-semibold text-neutral-700">Foto URL</span><Input value={form.foto} onChange={(e) => setForm((c) => ({ ...c, foto: e.target.value }))} placeholder="Opsional" /></label>
+          <div className="block">
+            <span className="mb-1.5 block text-sm font-semibold text-neutral-700">Foto Siswa</span>
+            <label className="flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-xl border border-dashed border-neutral-200 bg-neutral-50/70 px-3.5 py-2.5 text-sm text-neutral-500 transition-colors hover:border-orange-200 hover:bg-orange-50/40">
+              <span className="min-w-0 truncate">{form.foto ? "Ganti foto" : "Pilih foto dari device"}</span>
+              <Upload className="h-4 w-4 shrink-0 text-orange-500" />
+              <input
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                onChange={async (event) => {
+                  const file = event.target.files?.[0];
+                  if (file) await readPhoto(file);
+                  event.target.value = "";
+                }}
+              />
+            </label>
+            {form.foto ? (
+              <div className="mt-2 flex items-center gap-3 rounded-xl border border-neutral-200 bg-white p-2">
+                <Image src={form.foto} alt="Preview foto siswa" width={48} height={48} unoptimized className="h-12 w-12 rounded-xl object-cover" />
+                <button type="button" className="text-xs font-semibold text-rose-600 hover:text-rose-700" onClick={() => setForm((current) => ({ ...current, foto: "" }))}>
+                  Hapus foto
+                </button>
+              </div>
+            ) : null}
+          </div>
           <label className="block sm:col-span-2"><span className="mb-1.5 block text-sm font-semibold text-neutral-700">Alamat</span><Textarea value={form.alamat} onChange={(e) => setForm((c) => ({ ...c, alamat: e.target.value }))} className="min-h-20" placeholder="Opsional" /></label>
           <div className="sticky bottom-0 -mx-5 -mb-5 flex justify-end gap-2 border-t border-neutral-100 bg-white/95 px-5 py-4 backdrop-blur sm:col-span-2 sm:static sm:m-0 sm:border-0 sm:bg-transparent sm:p-0 sm:pt-2 sm:backdrop-blur-none">
             <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Batal</Button>

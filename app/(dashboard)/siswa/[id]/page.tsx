@@ -1,6 +1,7 @@
 "use client";
 
 import { eachDayOfInterval, endOfMonth, format, startOfMonth } from "date-fns";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { PageShell } from "@/components/layout/page-shell";
@@ -55,9 +56,13 @@ export default function DetailSiswaPage() {
     <PageShell title={siswa?.nama ?? "Detail Siswa"} description="Profil siswa dan riwayat absensi.">
       <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
         <section className="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-subtle">
-          <div className="grid h-20 w-20 place-items-center rounded-2xl bg-gradient-to-br from-orange-400 to-orange-500 text-2xl font-bold text-white shadow-sm">
-            {getInitials(siswa?.nama ?? "S")}
-          </div>
+          {siswa?.foto ? (
+            <Image src={siswa.foto} alt={`Foto ${siswa.nama}`} width={96} height={96} unoptimized className="h-24 w-24 rounded-2xl object-cover shadow-sm" />
+          ) : (
+            <div className="grid h-20 w-20 place-items-center rounded-2xl bg-gradient-to-br from-orange-400 to-orange-500 text-2xl font-bold text-white shadow-sm">
+              {getInitials(siswa?.nama ?? "S")}
+            </div>
+          )}
           <h2 className="mt-5 text-xl font-bold text-neutral-900">{siswa?.nama}</h2>
           <p className="mt-1 font-mono text-sm text-neutral-400">{siswa?.nis}</p>
           <div className="mt-4 space-y-2.5 text-sm text-neutral-500">
