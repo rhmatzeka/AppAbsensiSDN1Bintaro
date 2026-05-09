@@ -150,7 +150,7 @@ export default function SiswaPage() {
           <div className="block">
             <span className="mb-1.5 block text-sm font-semibold text-neutral-700">Foto Siswa</span>
             <label className="flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-xl border border-dashed border-neutral-200 bg-neutral-50/70 px-3.5 py-2.5 text-sm text-neutral-500 transition-colors hover:border-orange-200 hover:bg-orange-50/40">
-              <span className="min-w-0 truncate">{form.foto ? "Ganti foto" : "Pilih foto dari device"}</span>
+              <span className="min-w-0 truncate">{form.foto ? "Ganti foto siswa" : "Upload foto siswa"}</span>
               <Upload className="h-4 w-4 shrink-0 text-orange-500" />
               <input
                 type="file"
