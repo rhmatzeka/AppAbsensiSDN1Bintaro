@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { StatusSiswa } from "@prisma/client";
 import { jsonError, readJson, requireUser } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 
@@ -15,7 +16,7 @@ export async function GET() {
 
   try {
     const kelas = await prisma.kelas.findMany({
-      include: { _count: { select: { siswa: true } } },
+      include: { _count: { select: { siswa: { where: { status: StatusSiswa.AKTIF } } } } },
       orderBy: [{ tingkat: "asc" }, { nama: "asc" }]
     });
 

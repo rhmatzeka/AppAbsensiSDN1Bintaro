@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { JenisKelamin, Role } from "@prisma/client";
+import { JenisKelamin, Role, StatusSiswa } from "@prisma/client";
 import { jsonError, readJson, requireAdmin, requireUser } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 
@@ -11,6 +11,7 @@ type SiswaPayload = {
   tanggalLahir?: string | null;
   alamat?: string | null;
   foto?: string | null;
+  status?: StatusSiswa;
   kelasId?: string;
 };
 
@@ -55,6 +56,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
         tanggalLahir: body.tanggalLahir ? new Date(body.tanggalLahir) : undefined,
         alamat: body.alamat?.trim() || null,
         foto: body.foto?.trim() || null,
+        status: body.status,
         kelasId: body.kelasId
       }
     });

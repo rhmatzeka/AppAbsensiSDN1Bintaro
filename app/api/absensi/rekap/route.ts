@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { Role, StatusAbsensi } from "@prisma/client";
+import { Role, StatusAbsensi, StatusSiswa } from "@prisma/client";
 import { endOfMonth, startOfMonth } from "date-fns";
 import { jsonError, requireUser } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   try {
     const effectiveKelasId = user.role === Role.GURU ? user.kelasId ?? "__none__" : kelasId || undefined;
     const siswa = await prisma.siswa.findMany({
-      where: effectiveKelasId ? { kelasId: effectiveKelasId } : {},
+      where: { status: StatusSiswa.AKTIF, ...(effectiveKelasId ? { kelasId: effectiveKelasId } : {}) },
       include: {
         kelas: { select: { nama: true } },
         absensi: {

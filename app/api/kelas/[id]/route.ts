@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { StatusSiswa } from "@prisma/client";
 import { jsonError, readJson, requireUser } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 
@@ -18,7 +19,10 @@ export async function GET(_request: NextRequest, { params }: Params) {
   try {
     const kelas = await prisma.kelas.findUnique({
       where: { id },
-      include: { siswa: { orderBy: { nama: "asc" } }, _count: { select: { siswa: true } } }
+      include: {
+        siswa: { where: { status: StatusSiswa.AKTIF }, orderBy: { nama: "asc" } },
+        _count: { select: { siswa: { where: { status: StatusSiswa.AKTIF } } } }
+      }
     });
     if (!kelas) return NextResponse.json({ message: "Kelas tidak ditemukan" }, { status: 404 });
     return NextResponse.json(kelas);

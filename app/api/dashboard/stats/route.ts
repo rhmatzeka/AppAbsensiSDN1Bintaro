@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { Role, StatusAbsensi } from "@prisma/client";
+import { Role, StatusAbsensi, StatusSiswa } from "@prisma/client";
 import { endOfDay, startOfDay, subDays } from "date-fns";
 import { jsonError, requireUser } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
@@ -14,7 +14,10 @@ export async function GET() {
       tanggal: { gte: startOfDay(today), lte: endOfDay(today) },
       ...(user.role === Role.GURU ? { kelasId: user.kelasId ?? "__none__" } : {})
     };
-    const siswaWhere = user.role === Role.GURU ? { kelasId: user.kelasId ?? "__none__" } : {};
+    const siswaWhere = {
+      status: StatusSiswa.AKTIF,
+      ...(user.role === Role.GURU ? { kelasId: user.kelasId ?? "__none__" } : {})
+    };
 
     const [totalSiswa, hadirHariIni, tidakHadir, recent, kelas] = await Promise.all([
       prisma.siswa.count({ where: siswaWhere }),

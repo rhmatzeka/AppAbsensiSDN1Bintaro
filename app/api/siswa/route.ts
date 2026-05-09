@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { JenisKelamin, Prisma, Role } from "@prisma/client";
+import { JenisKelamin, Prisma, Role, StatusSiswa } from "@prisma/client";
 import { jsonError, readJson, requireAdmin, requireUser } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 
@@ -10,6 +10,7 @@ type SiswaPayload = {
   tanggalLahir?: string | null;
   alamat?: string | null;
   foto?: string | null;
+  status?: StatusSiswa;
   kelasId?: string;
   items?: SiswaPayload[];
 };
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get("search")?.trim();
   const kelasId = searchParams.get("kelasId")?.trim();
 
-  const where: Prisma.SiswaWhereInput = {};
+  const where: Prisma.SiswaWhereInput = { status: StatusSiswa.AKTIF };
   if (user.role === Role.GURU) where.kelasId = user.kelasId ?? "__none__";
   if (kelasId && user.role === Role.ADMIN) where.kelasId = kelasId;
   if (search) {
@@ -77,6 +78,7 @@ export async function POST(request: NextRequest) {
           tanggalLahir: item.tanggalLahir ? new Date(item.tanggalLahir) : null,
           alamat: item.alamat?.trim() || null,
           foto: item.foto?.trim() || null,
+          status: item.status ?? StatusSiswa.AKTIF,
           kelasId: item.kelasId ?? ""
         })),
         skipDuplicates: true
@@ -93,6 +95,7 @@ export async function POST(request: NextRequest) {
         tanggalLahir: item.tanggalLahir ? new Date(item.tanggalLahir) : null,
         alamat: item.alamat?.trim() || null,
         foto: item.foto?.trim() || null,
+        status: item.status ?? StatusSiswa.AKTIF,
         kelasId: item.kelasId ?? ""
       }
     });

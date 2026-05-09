@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { BarChart3, CalendarCheck, ClipboardList, GraduationCap, LayoutDashboard, PanelLeftClose, PanelLeftOpen, UserCog, X, Users } from "lucide-react";
+import { ArrowUpRight, BarChart3, CalendarCheck, ClipboardList, GraduationCap, LayoutDashboard, PanelLeftClose, PanelLeftOpen, UserCog, X, Users } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
@@ -18,6 +18,7 @@ const baseItems = [
 ];
 
 const adminItems = [
+  { href: "/kenaikan-kelas", label: "Kenaikan Kelas", icon: ArrowUpRight },
   { href: "/pengguna", label: "Pengguna", icon: UserCog },
   { href: "/log-guru", label: "Log Guru", icon: ClipboardList }
 ];

@@ -29,6 +29,7 @@ model Kelas {
   siswa     Siswa[]
   absensi   Absensi[]
   guru      User[]
+  riwayatSiswa RiwayatKelasSiswa[]
   createdAt DateTime  @default(now())
 }
 
@@ -40,9 +41,11 @@ model Siswa {
   tanggalLahir DateTime?
   alamat       String?
   foto         String?
+  status       StatusSiswa  @default(AKTIF)
   kelasId      String
   kelas        Kelas        @relation(fields: [kelasId], references: [id], onDelete: Restrict)
   absensi      Absensi[]
+  riwayatKelas RiwayatKelasSiswa[]
   createdAt    DateTime     @default(now())
 }
 
@@ -65,6 +68,21 @@ model Absensi {
   @@index([tanggal])
 }
 
+model RiwayatKelasSiswa {
+  id        String             @id @default(cuid())
+  siswaId   String
+  siswa     Siswa              @relation(fields: [siswaId], references: [id], onDelete: Cascade)
+  kelasId   String?
+  kelas     Kelas?             @relation(fields: [kelasId], references: [id], onDelete: SetNull)
+  tahunAjar String
+  status    StatusRiwayatKelas @default(AKTIF)
+  catatan   String?
+  createdAt DateTime           @default(now())
+
+  @@index([siswaId, tahunAjar])
+  @@index([tahunAjar])
+}
+
 enum Role {
   ADMIN
   GURU
@@ -80,4 +98,20 @@ enum StatusAbsensi {
 enum JenisKelamin {
   LAKI_LAKI
   PEREMPUAN
+}
+
+enum StatusSiswa {
+  AKTIF
+  LULUS
+  PINDAH
+  KELUAR
+}
+
+enum StatusRiwayatKelas {
+  AKTIF
+  NAIK
+  TINGGAL
+  LULUS
+  PINDAH
+  KELUAR
 }

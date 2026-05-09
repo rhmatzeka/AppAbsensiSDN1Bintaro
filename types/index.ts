@@ -1,10 +1,14 @@
 export const ATTENDANCE_STATUSES = ["HADIR", "SAKIT", "IZIN", "ALPHA"] as const;
 export const GENDERS = ["LAKI_LAKI", "PEREMPUAN"] as const;
 export const USER_ROLES = ["ADMIN", "GURU"] as const;
+export const STUDENT_STATUSES = ["AKTIF", "LULUS", "PINDAH", "KELUAR"] as const;
+export const CLASS_HISTORY_STATUSES = ["AKTIF", "NAIK", "TINGGAL", "LULUS", "PINDAH", "KELUAR"] as const;
 
 export type AttendanceStatus = (typeof ATTENDANCE_STATUSES)[number];
 export type Gender = (typeof GENDERS)[number];
 export type UserRole = (typeof USER_ROLES)[number];
+export type StudentStatus = (typeof STUDENT_STATUSES)[number];
+export type ClassHistoryStatus = (typeof CLASS_HISTORY_STATUSES)[number];
 
 export type KelasSummary = {
   id: string;
@@ -23,6 +27,7 @@ export type SiswaRow = {
   tanggalLahir: string | null;
   alamat: string | null;
   foto: string | null;
+  status: StudentStatus;
   kelasId: string;
   kelas: {
     id: string;
