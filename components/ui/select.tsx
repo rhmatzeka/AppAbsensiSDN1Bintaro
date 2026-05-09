@@ -33,6 +33,19 @@ function readOptions(children: React.ReactNode): SelectOption[] {
   });
 }
 
+function dropdownStyle(rect: DOMRect): React.CSSProperties {
+  const margin = 8;
+  const width = Math.min(rect.width, window.innerWidth - margin * 2);
+  const left = Math.min(Math.max(margin, rect.left), window.innerWidth - width - margin);
+  const spaceBelow = window.innerHeight - rect.bottom - margin;
+  const spaceAbove = rect.top - margin;
+  const openUp = spaceBelow < 180 && spaceAbove > spaceBelow;
+  const maxHeight = Math.max(120, Math.min(288, openUp ? spaceAbove - margin : spaceBelow - margin));
+  const top = openUp ? Math.max(margin, rect.top - margin - maxHeight) : rect.bottom + margin;
+
+  return { left, top, width, maxHeight };
+}
+
 export function Select({ className, children, value, defaultValue, onChange, disabled, name, id, required }: SelectProps) {
   const options = useMemo(() => readOptions(children), [children]);
   const [internalValue, setInternalValue] = useState(String(defaultValue ?? options[0]?.value ?? ""));
@@ -100,7 +113,7 @@ export function Select({ className, children, value, defaultValue, onChange, dis
         id={id}
         disabled={disabled}
         className={cn(
-          "group flex min-h-11 w-full items-center justify-between gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-left text-sm text-neutral-800 outline-none transition-colors hover:border-neutral-300 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/15 disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:text-neutral-400",
+          "group flex min-h-11 w-full min-w-0 items-center justify-between gap-2 overflow-hidden rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-left text-sm text-neutral-800 outline-none transition-colors hover:border-neutral-300 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/15 disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:text-neutral-400",
           open && "border-orange-400 ring-2 ring-orange-400/15",
           className
         )}
@@ -118,7 +131,7 @@ export function Select({ className, children, value, defaultValue, onChange, dis
               if (event.key === "Escape") setOpen(false);
               if (event.key === "Enter" && filtered[0] && !filtered[0].disabled) selectValue(filtered[0].value);
             }}
-            className="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-neutral-800 outline-none placeholder:text-neutral-400 focus:ring-0"
+            className="w-0 min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-neutral-800 outline-none placeholder:text-neutral-400 focus:ring-0"
             placeholder={selected?.label ?? "Cari pilihan..."}
           />
         ) : (
@@ -131,12 +144,7 @@ export function Select({ className, children, value, defaultValue, onChange, dis
         <div
           ref={listRef}
           className="fixed z-[220] overflow-hidden rounded-2xl border border-neutral-200 bg-white p-1.5 shadow-card"
-          style={{
-            left: rect.left,
-            top: rect.bottom + 8,
-            width: rect.width,
-            maxHeight: Math.max(180, Math.min(288, window.innerHeight - rect.bottom - 16))
-          }}
+          style={dropdownStyle(rect)}
           role="listbox"
         >
           <div className="max-h-[inherit] overflow-y-auto">
