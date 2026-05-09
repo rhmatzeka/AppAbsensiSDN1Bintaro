@@ -42,9 +42,12 @@ function dropdownStyle(rect: DOMRect, itemCount: number): React.CSSProperties {
   const desiredHeight = itemCount > 0 ? Math.min(288, itemCount * 40 + 12) : 64;
   const openUp = spaceBelow < desiredHeight && spaceAbove > spaceBelow;
   const maxHeight = Math.max(64, Math.min(desiredHeight, openUp ? spaceAbove - margin : spaceBelow - margin));
-  const top = openUp ? Math.max(margin, rect.top - margin - maxHeight) : rect.bottom + margin;
 
-  return { left, top, width, maxHeight };
+  if (openUp) {
+    return { left, bottom: window.innerHeight - rect.top + margin, width, maxHeight };
+  }
+
+  return { left, top: rect.bottom + margin, width, maxHeight };
 }
 
 export function Select({ className, children, value, defaultValue, onChange, disabled, name, id, required }: SelectProps) {
