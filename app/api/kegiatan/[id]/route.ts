@@ -54,11 +54,11 @@ export async function PUT(request: NextRequest, { params }: Params) {
     if (user.role === Role.GURU && kelasId !== user.kelasId) {
       return NextResponse.json({ message: "Guru hanya bisa mencatat kegiatan untuk kelas yang ditugaskan" }, { status: 403 });
     }
-    const targetUserId = user.role === Role.ADMIN ? body.guruId?.trim() : user.id;
+    const targetUserId = user.role === Role.ADMIN ? body.guruId?.trim() || user.id : user.id;
     if (!targetUserId) {
       return NextResponse.json({ message: "Guru wajib dipilih" }, { status: 400 });
     }
-    if (user.role === Role.ADMIN) {
+    if (user.role === Role.ADMIN && targetUserId !== user.id) {
       const targetUser = await prisma.user.findUnique({ where: { id: targetUserId }, select: { role: true } });
       if (!targetUser || targetUser.role !== Role.GURU) {
         return NextResponse.json({ message: "Pilih akun guru yang valid" }, { status: 400 });

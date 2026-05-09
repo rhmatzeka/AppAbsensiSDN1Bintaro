@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { ArrowUpRight, BarChart3, BookOpenText, CalendarCheck, ClipboardList, GraduationCap, LayoutDashboard, PanelLeftClose, PanelLeftOpen, UserCog, X, Users } from "lucide-react";
+import { ArrowUpRight, BarChart3, CalendarCheck, ClipboardList, GraduationCap, LayoutDashboard, PanelLeftClose, PanelLeftOpen, UserCog, X, Users } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
@@ -12,7 +12,6 @@ import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
 const baseItems = [
   { href: "/dashboard", label: "Dashboard", shortLabel: "Dasbor", icon: LayoutDashboard },
   { href: "/absensi", label: "Absensi", icon: CalendarCheck },
-  { href: "/kegiatan", label: "Kegiatan Guru", shortLabel: "Kegiatan", icon: BookOpenText },
   { href: "/siswa", label: "Siswa", icon: Users },
   { href: "/kelas", label: "Kelas", icon: GraduationCap },
   { href: "/laporan", label: "Laporan", icon: BarChart3 }

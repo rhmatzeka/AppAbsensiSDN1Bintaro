@@ -41,7 +41,7 @@ const emptyKegiatan: KegiatanForm = { jamMulai: "", jamSelesai: "", materi: "", 
 export default function AbsensiPage() {
   const { data: session } = useSession();
   const { showToast } = useToast();
-  const isGuru = session?.user.role === "GURU";
+  const canFillKegiatan = Boolean(session?.user);
   const [kelasId, setKelasId] = useState("");
   const [tanggal, setTanggal] = useState(toDateInputValue(new Date()));
   const [rows, setRows] = useState<FormRow[]>([]);
@@ -51,16 +51,21 @@ export default function AbsensiPage() {
   const { data: siswaData, isLoading: loadingSiswa, mutate: refreshSiswa } = useSiswa({ kelasId, limit: 100 });
   const { data: existing, mutate: refreshAbsensi } = useAbsensi({ kelasId, tanggal });
   const { data: existingKegiatan, mutate: refreshKegiatan } = useKegiatan({
-    enabled: Boolean(isGuru && kelasId && tanggal),
+    enabled: Boolean(canFillKegiatan && kelasId && tanggal),
+    guruId: session?.user.id,
     kelasId,
     tanggal,
     limit: 1
   });
 
   useEffect(() => {
-    if (!kelasId && isGuru && session?.user.kelasId) setKelasId(session.user.kelasId);
-    if (!kelasId && !isGuru && kelas?.[0]) setKelasId(kelas[0].id);
-  }, [isGuru, kelas, kelasId, session?.user.kelasId]);
+    if (!session?.user || kelasId) return;
+    if (session.user.role === "GURU" && session.user.kelasId) {
+      setKelasId(session.user.kelasId);
+      return;
+    }
+    if (kelas?.[0]) setKelasId(kelas[0].id);
+  }, [kelas, kelasId, session?.user]);
 
   useEffect(() => {
     const siswa = siswaData?.items ?? [];
@@ -109,7 +114,7 @@ export default function AbsensiPage() {
 
   async function save() {
     if (!kelasId || rows.length === 0) return;
-    const hasKegiatan = Boolean(isGuru) && Object.entries(kegiatanForm)
+    const hasKegiatan = canFillKegiatan && Object.entries(kegiatanForm)
       .filter(([key]) => key !== "id")
       .some(([, value]) => value.trim());
 
@@ -138,6 +143,7 @@ export default function AbsensiPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           tanggal,
+          guruId: session?.user.id,
           kelasId,
           jamMulai: kegiatanForm.jamMulai,
           jamSelesai: kegiatanForm.jamSelesai,
@@ -198,15 +204,15 @@ export default function AbsensiPage() {
         </div>
       </div>
 
-      {isGuru ? (
+      {canFillKegiatan ? (
         <section className="rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-subtle">
           <div className="mb-4 flex items-start gap-3">
             <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-orange-50 text-orange-600">
               <BookOpenText className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-neutral-900">Kegiatan Mengajar Hari Ini</h2>
-              <p className="mt-0.5 text-sm text-neutral-500">Isi tema atau materi saat menyimpan absensi agar masuk ke rekap kegiatan guru.</p>
+              <h2 className="text-base font-bold text-neutral-900">Materi Pembelajaran Hari Ini</h2>
+              <p className="mt-0.5 text-sm text-neutral-500">Isi tema atau materi saat menyimpan absensi agar tercatat di laporan.</p>
             </div>
           </div>
 

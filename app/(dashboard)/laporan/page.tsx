@@ -9,8 +9,9 @@ import { Select } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, Td, Th } from "@/components/ui/table";
 import { useApi } from "@/hooks/useApi";
+import { useKegiatan } from "@/hooks/useKegiatan";
 import { useKelas } from "@/hooks/useKelas";
-import { cn, toDateInputValue } from "@/lib/utils";
+import { cn, formatDate, toDateInputValue } from "@/lib/utils";
 import type { RekapRow } from "@/types";
 
 const BULAN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
@@ -37,6 +38,13 @@ export default function LaporanPage() {
   const [tanggalAwal, setTanggalAwal] = useState(currentWeek.start);
   const [tanggalAkhir, setTanggalAkhir] = useState(currentWeek.end);
   const { data: kelas } = useKelas();
+  const periodRange = useMemo(() => {
+    if (periode === "mingguan") return { start: tanggalAwal, end: tanggalAkhir };
+    return {
+      start: toDateInputValue(new Date(tahun, bulan - 1, 1)),
+      end: toDateInputValue(new Date(tahun, bulan, 0))
+    };
+  }, [bulan, periode, tanggalAkhir, tanggalAwal, tahun]);
   const url = useMemo(() => {
     const p = new URLSearchParams({ periode });
     if (periode === "mingguan") {
@@ -50,6 +58,13 @@ export default function LaporanPage() {
     return `/api/absensi/rekap?${p.toString()}`;
   }, [bulan, kelasId, periode, tanggalAkhir, tanggalAwal, tahun]);
   const { data, isLoading } = useApi<RekapRow[]>(url);
+  const { data: kegiatanData, isLoading: loadingKegiatan } = useKegiatan({
+    page: 1,
+    limit: 100,
+    kelasId,
+    tanggalAwal: periodRange.start,
+    tanggalAkhir: periodRange.end
+  });
   const periodLabel = periode === "mingguan"
     ? `${tanggalAwal} sampai ${tanggalAkhir}`
     : `${BULAN[bulan - 1]} ${tahun}`;
@@ -57,7 +72,26 @@ export default function LaporanPage() {
   function exportCsv() {
     const header = ["NIS", "Nama", "Kelas", "Hadir", "Sakit", "Izin", "Alpha", "Persentase"];
     const rows = (data ?? []).map((i) => [i.nis, i.nama, i.kelas, i.HADIR, i.SAKIT, i.IZIN, i.ALPHA, `${i.persentase}%`]);
-    const csv = [header, ...rows].map((r) => r.map((v) => `"${String(v).replaceAll("\"", "\"\"")}"`).join(",")).join("\n");
+    const kegiatanHeader = ["Tanggal", "Kelas", "Pengisi", "Jam", "Tema / Materi", "Kegiatan", "Catatan"];
+    const kegiatanRows = (kegiatanData?.items ?? []).map((item) => [
+      formatDate(item.tanggal, "d MMM yyyy"),
+      item.kelas.nama,
+      item.user.name,
+      [item.jamMulai, item.jamSelesai].filter(Boolean).join(" - "),
+      item.materi,
+      item.kegiatan,
+      item.catatan ?? ""
+    ]);
+    const csvRows = [
+      ["Rekap Absensi"],
+      header,
+      ...rows,
+      [],
+      ["Materi Pembelajaran"],
+      kegiatanHeader,
+      ...kegiatanRows
+    ];
+    const csv = csvRows.map((r) => r.map((v) => `"${String(v).replaceAll("\"", "\"\"")}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const u = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -78,7 +112,7 @@ export default function LaporanPage() {
           <Button type="button" variant="secondary" onClick={() => window.print()}>
             <Printer className="h-4 w-4" />Print
           </Button>
-          <Button type="button" onClick={exportCsv} disabled={!data?.length}>
+          <Button type="button" onClick={exportCsv} disabled={!data?.length && !kegiatanData?.items.length}>
             <Download className="h-4 w-4" />Export CSV
           </Button>
         </>
@@ -138,6 +172,47 @@ export default function LaporanPage() {
           )}
         </div>
       </div>
+
+      <section className="rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-subtle">
+        <div className="mb-4">
+          <h2 className="text-base font-bold text-neutral-900">Materi Pembelajaran</h2>
+          <p className="mt-0.5 text-sm text-neutral-500">Tema atau materi yang dicatat saat input absensi pada periode ini.</p>
+        </div>
+        {loadingKegiatan ? (
+          <Skeleton className="h-32" />
+        ) : !kegiatanData?.items.length ? (
+          <div className="rounded-xl border border-dashed border-neutral-200 p-5 text-sm text-neutral-500">
+            Belum ada materi pembelajaran yang dicatat untuk periode ini.
+          </div>
+        ) : (
+          <Table>
+            <thead>
+              <tr>
+                <Th>Tanggal</Th>
+                <Th>Kelas</Th>
+                <Th>Pengisi</Th>
+                <Th>Jam</Th>
+                <Th>Tema / Materi</Th>
+                <Th>Kegiatan</Th>
+                <Th>Catatan</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {kegiatanData.items.map((item) => (
+                <tr key={item.id} className="transition-colors hover:bg-orange-50/30">
+                  <Td className="text-xs text-neutral-500">{formatDate(item.tanggal, "d MMM yyyy")}</Td>
+                  <Td><span className="inline-flex rounded-lg bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600">{item.kelas.nama}</span></Td>
+                  <Td className="font-semibold text-neutral-800">{item.user.name}</Td>
+                  <Td className="text-xs text-neutral-500">{[item.jamMulai, item.jamSelesai].filter(Boolean).join(" - ") || "-"}</Td>
+                  <Td className="font-semibold text-neutral-800">{item.materi}</Td>
+                  <Td className="max-w-md whitespace-normal leading-6 text-neutral-600">{item.kegiatan}</Td>
+                  <Td className="max-w-xs whitespace-normal text-neutral-500">{item.catatan ?? "-"}</Td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+      </section>
 
       {/* Table */}
       {isLoading ? <Skeleton className="h-96" /> : (
