@@ -33,14 +33,15 @@ function readOptions(children: React.ReactNode): SelectOption[] {
   });
 }
 
-function dropdownStyle(rect: DOMRect): React.CSSProperties {
+function dropdownStyle(rect: DOMRect, itemCount: number): React.CSSProperties {
   const margin = 8;
   const width = Math.min(rect.width, window.innerWidth - margin * 2);
   const left = Math.min(Math.max(margin, rect.left), window.innerWidth - width - margin);
   const spaceBelow = window.innerHeight - rect.bottom - margin;
   const spaceAbove = rect.top - margin;
-  const openUp = spaceBelow < 180 && spaceAbove > spaceBelow;
-  const maxHeight = Math.max(120, Math.min(288, openUp ? spaceAbove - margin : spaceBelow - margin));
+  const desiredHeight = itemCount > 0 ? Math.min(288, itemCount * 40 + 12) : 64;
+  const openUp = spaceBelow < desiredHeight && spaceAbove > spaceBelow;
+  const maxHeight = Math.max(64, Math.min(desiredHeight, openUp ? spaceAbove - margin : spaceBelow - margin));
   const top = openUp ? Math.max(margin, rect.top - margin - maxHeight) : rect.bottom + margin;
 
   return { left, top, width, maxHeight };
@@ -144,7 +145,7 @@ export function Select({ className, children, value, defaultValue, onChange, dis
         <div
           ref={listRef}
           className="fixed z-[220] overflow-hidden rounded-2xl border border-neutral-200 bg-white p-1.5 shadow-card"
-          style={dropdownStyle(rect)}
+          style={dropdownStyle(rect, filtered.length)}
           role="listbox"
         >
           <div className="max-h-[inherit] overflow-y-auto">
