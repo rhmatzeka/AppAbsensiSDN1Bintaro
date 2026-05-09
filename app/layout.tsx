@@ -13,9 +13,9 @@ export const metadata: Metadata = {
   title: "App Absensi SDN Bintaro 01",
   description: "Sistem absensi siswa digital SDN Bintaro 01. Kelola kehadiran, data siswa, dan laporan bulanan.",
   icons: {
-    icon: [{ url: "/logo-sdn-bintaro.png", type: "image/png" }],
-    shortcut: [{ url: "/logo-sdn-bintaro.png", type: "image/png" }],
-    apple: [{ url: "/logo-sdn-bintaro.png", type: "image/png" }]
+    icon: [{ url: "/logosd.jpg", type: "image/jpeg" }],
+    shortcut: [{ url: "/logosd.jpg", type: "image/jpeg" }],
+    apple: [{ url: "/logosd.jpg", type: "image/jpeg" }]
   }
 };
 
