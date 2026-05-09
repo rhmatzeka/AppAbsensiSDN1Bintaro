@@ -18,6 +18,7 @@ model User {
   kelas     Kelas?    @relation(fields: [kelasId], references: [id])
   createdAt DateTime  @default(now())
   absensi   Absensi[]
+  kegiatan  KegiatanGuru[]
 }
 
 model Kelas {
@@ -29,6 +30,7 @@ model Kelas {
   siswa     Siswa[]
   absensi   Absensi[]
   guru      User[]
+  kegiatan  KegiatanGuru[]
   riwayatSiswa RiwayatKelasSiswa[]
   createdAt DateTime  @default(now())
 }
@@ -81,6 +83,26 @@ model RiwayatKelasSiswa {
 
   @@index([siswaId, tahunAjar])
   @@index([tahunAjar])
+}
+
+model KegiatanGuru {
+  id         String   @id @default(cuid())
+  tanggal    DateTime @db.Date
+  jamMulai   String?
+  jamSelesai String?
+  materi     String
+  kegiatan   String
+  catatan    String?
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kelasId    String
+  kelas      Kelas    @relation(fields: [kelasId], references: [id], onDelete: Restrict)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([tanggal])
+  @@index([userId, tanggal])
+  @@index([kelasId, tanggal])
 }
 
 enum Role {

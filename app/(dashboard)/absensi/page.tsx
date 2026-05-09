@@ -1,6 +1,7 @@
 "use client";
 
-import { Save, CheckCircle2 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { BookOpenText, Save, CheckCircle2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { PageShell } from "@/components/layout/page-shell";
 import { SummaryCard } from "@/components/absensi/summary-card";
@@ -12,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, Td, Th } from "@/components/ui/table";
 import { useToast } from "@/components/ui/toast";
 import { useAbsensi } from "@/hooks/useAbsensi";
+import { useKegiatan } from "@/hooks/useKegiatan";
 import { useKelas } from "@/hooks/useKelas";
 import { useSiswa } from "@/hooks/useSiswa";
 import { toDateInputValue } from "@/lib/utils";
@@ -24,21 +26,41 @@ type FormRow = {
   keterangan: string;
 };
 
+type KegiatanForm = {
+  id?: string;
+  jamMulai: string;
+  jamSelesai: string;
+  materi: string;
+  kegiatan: string;
+  catatan: string;
+};
+
 const statuses = ATTENDANCE_STATUSES;
+const emptyKegiatan: KegiatanForm = { jamMulai: "", jamSelesai: "", materi: "", kegiatan: "", catatan: "" };
 
 export default function AbsensiPage() {
+  const { data: session } = useSession();
   const { showToast } = useToast();
+  const isGuru = session?.user.role === "GURU";
   const [kelasId, setKelasId] = useState("");
   const [tanggal, setTanggal] = useState(toDateInputValue(new Date()));
   const [rows, setRows] = useState<FormRow[]>([]);
+  const [kegiatanForm, setKegiatanForm] = useState<KegiatanForm>(emptyKegiatan);
   const [saving, setSaving] = useState(false);
   const { data: kelas } = useKelas();
   const { data: siswaData, isLoading: loadingSiswa, mutate: refreshSiswa } = useSiswa({ kelasId, limit: 100 });
   const { data: existing, mutate: refreshAbsensi } = useAbsensi({ kelasId, tanggal });
+  const { data: existingKegiatan, mutate: refreshKegiatan } = useKegiatan({
+    enabled: Boolean(isGuru && kelasId && tanggal),
+    kelasId,
+    tanggal,
+    limit: 1
+  });
 
   useEffect(() => {
-    if (!kelasId && kelas?.[0]) setKelasId(kelas[0].id);
-  }, [kelas, kelasId]);
+    if (!kelasId && isGuru && session?.user.kelasId) setKelasId(session.user.kelasId);
+    if (!kelasId && !isGuru && kelas?.[0]) setKelasId(kelas[0].id);
+  }, [isGuru, kelas, kelasId, session?.user.kelasId]);
 
   useEffect(() => {
     const siswa = siswaData?.items ?? [];
@@ -54,6 +76,22 @@ export default function AbsensiPage() {
       })
     );
   }, [existing, siswaData]);
+
+  useEffect(() => {
+    const found = existingKegiatan?.items[0];
+    setKegiatanForm(
+      found
+        ? {
+            id: found.id,
+            jamMulai: found.jamMulai ?? "",
+            jamSelesai: found.jamSelesai ?? "",
+            materi: found.materi,
+            kegiatan: found.kegiatan,
+            catatan: found.catatan ?? ""
+          }
+        : emptyKegiatan
+    );
+  }, [existingKegiatan]);
 
   const summary = useMemo(() => {
     return statuses.reduce<Record<AttendanceStatus, number>>(
@@ -71,22 +109,56 @@ export default function AbsensiPage() {
 
   async function save() {
     if (!kelasId || rows.length === 0) return;
+    const hasKegiatan = Boolean(isGuru) && Object.entries(kegiatanForm)
+      .filter(([key]) => key !== "id")
+      .some(([, value]) => value.trim());
+
+    if (hasKegiatan && !kegiatanForm.materi.trim()) {
+      showToast("Tema atau materi wajib diisi jika ingin menyimpan kegiatan guru", "error");
+      return;
+    }
+
     setSaving(true);
     const response = await fetch("/api/absensi", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tanggal, items: rows })
     });
-    setSaving(false);
 
     if (!response.ok) {
+      setSaving(false);
       const data = (await response.json().catch(() => ({ message: "Gagal menyimpan absensi" }))) as { message?: string };
       showToast(data.message ?? "Gagal menyimpan absensi", "error");
       return;
     }
 
-    await Promise.all([refreshAbsensi(), refreshSiswa()]);
-    showToast("Absensi berhasil disimpan");
+    if (hasKegiatan) {
+      const kegiatanResponse = await fetch(kegiatanForm.id ? `/api/kegiatan/${kegiatanForm.id}` : "/api/kegiatan", {
+        method: kegiatanForm.id ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tanggal,
+          kelasId,
+          jamMulai: kegiatanForm.jamMulai,
+          jamSelesai: kegiatanForm.jamSelesai,
+          materi: kegiatanForm.materi,
+          kegiatan: kegiatanForm.kegiatan.trim() || `Mengajar materi ${kegiatanForm.materi.trim()}`,
+          catatan: kegiatanForm.catatan
+        })
+      });
+
+      if (!kegiatanResponse.ok) {
+        setSaving(false);
+        const data = (await kegiatanResponse.json().catch(() => ({ message: "Gagal menyimpan kegiatan guru" }))) as { message?: string };
+        await Promise.all([refreshAbsensi(), refreshSiswa()]);
+        showToast(`Absensi tersimpan, tetapi kegiatan gagal: ${data.message ?? "Gagal menyimpan kegiatan guru"}`, "error");
+        return;
+      }
+    }
+
+    setSaving(false);
+    await Promise.all([refreshAbsensi(), refreshSiswa(), refreshKegiatan()]);
+    showToast(hasKegiatan ? "Absensi dan kegiatan guru berhasil disimpan" : "Absensi berhasil disimpan");
   }
 
   return (
@@ -125,6 +197,53 @@ export default function AbsensiPage() {
           </div>
         </div>
       </div>
+
+      {isGuru ? (
+        <section className="rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-subtle">
+          <div className="mb-4 flex items-start gap-3">
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-orange-50 text-orange-600">
+              <BookOpenText className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-neutral-900">Kegiatan Mengajar Hari Ini</h2>
+              <p className="mt-0.5 text-sm text-neutral-500">Isi tema atau materi saat menyimpan absensi agar masuk ke rekap kegiatan guru.</p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-4">
+            <label className="block">
+              <span className="mb-2 block text-sm font-semibold text-neutral-700">Jam Mulai</span>
+              <Input type="time" value={kegiatanForm.jamMulai} onChange={(event) => setKegiatanForm((current) => ({ ...current, jamMulai: event.target.value }))} />
+            </label>
+            <label className="block">
+              <span className="mb-2 block text-sm font-semibold text-neutral-700">Jam Selesai</span>
+              <Input type="time" value={kegiatanForm.jamSelesai} onChange={(event) => setKegiatanForm((current) => ({ ...current, jamSelesai: event.target.value }))} />
+            </label>
+            <label className="block md:col-span-2">
+              <span className="mb-2 block text-sm font-semibold text-neutral-700">Tema / Materi</span>
+              <Input value={kegiatanForm.materi} onChange={(event) => setKegiatanForm((current) => ({ ...current, materi: event.target.value }))} placeholder="Contoh: Tema 4 Subtema 2 - Hidup Bersih" />
+            </label>
+            <label className="block md:col-span-2">
+              <span className="mb-2 block text-sm font-semibold text-neutral-700">Kegiatan Pembelajaran</span>
+              <textarea
+                value={kegiatanForm.kegiatan}
+                onChange={(event) => setKegiatanForm((current) => ({ ...current, kegiatan: event.target.value }))}
+                className="min-h-24 w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-800 shadow-sm outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-400/15"
+                placeholder="Contoh: Apersepsi, membaca materi, diskusi kelompok, dan latihan soal."
+              />
+            </label>
+            <label className="block md:col-span-2">
+              <span className="mb-2 block text-sm font-semibold text-neutral-700">Catatan Tambahan</span>
+              <textarea
+                value={kegiatanForm.catatan}
+                onChange={(event) => setKegiatanForm((current) => ({ ...current, catatan: event.target.value }))}
+                className="min-h-24 w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-800 shadow-sm outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-400/15"
+                placeholder="Opsional, misalnya kendala pembelajaran atau tindak lanjut."
+              />
+            </label>
+          </div>
+        </section>
+      ) : null}
 
       {/* Summary */}
       <div className="grid grid-cols-4 gap-2 sm:gap-4">

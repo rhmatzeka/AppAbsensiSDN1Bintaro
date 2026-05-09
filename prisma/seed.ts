@@ -154,6 +154,7 @@ function noteFor(status: StatusAbsensi) {
 }
 
 async function main() {
+  await prisma.kegiatanGuru.deleteMany();
   await prisma.absensi.deleteMany();
   await prisma.siswa.deleteMany();
   await prisma.user.deleteMany();
@@ -233,6 +234,39 @@ async function main() {
   }
 
   await prisma.absensi.createMany({ data: absensiData });
+
+  const kegiatanData = [];
+  const materiByGrade = [
+    ["Mengenal bilangan cacah", "Membaca suku kata", "Pola hidup bersih"],
+    ["Penjumlahan bersusun", "Membaca cerita pendek", "Lingkungan rumah"],
+    ["Pecahan sederhana", "Ide pokok paragraf", "Energi di sekitar kita"],
+    ["Bangun datar", "Teks wawancara", "Sumber daya alam"],
+    ["Volume bangun ruang", "Teks eksplanasi", "Sistem pencernaan"],
+    ["Statistika sederhana", "Pidato persuasif", "Persiapan asesmen"]
+  ];
+
+  for (let day = 0; day < 15; day += 1) {
+    const tanggal = dateOnly(subDays(new Date(), day));
+    const dayOfWeek = tanggal.getDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+
+    for (const [kelasIndex, kelasItem] of kelas.entries()) {
+      const teacher = teachers.find((item) => item.kelasId === kelasItem.id);
+      const materi = materiByGrade[kelasIndex][day % materiByGrade[kelasIndex].length];
+      kegiatanData.push({
+        tanggal,
+        jamMulai: "07:30",
+        jamSelesai: "10:30",
+        materi,
+        kegiatan: `Pembelajaran, diskusi, dan latihan soal tentang ${materi.toLowerCase()}.`,
+        catatan: day % 4 === 0 ? "Beberapa siswa perlu penguatan pada latihan mandiri." : null,
+        userId: teacher?.id ?? admin.id,
+        kelasId: kelasItem.id
+      });
+    }
+  }
+
+  await prisma.kegiatanGuru.createMany({ data: kegiatanData });
 }
 
 main()

@@ -113,3 +113,24 @@ export type GuruLogRow = {
     nama: string;
   };
 };
+
+export type KegiatanGuruRow = {
+  id: string;
+  tanggal: string;
+  jamMulai: string | null;
+  jamSelesai: string | null;
+  materi: string;
+  kegiatan: string;
+  catatan: string | null;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  kelas: {
+    id: string;
+    nama: string;
+  };
+};

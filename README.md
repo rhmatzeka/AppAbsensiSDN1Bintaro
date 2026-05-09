@@ -22,9 +22,10 @@ Aplikasi absensi siswa berbasis web untuk mengelola data kelas, siswa, input abs
 - Manajemen siswa dengan pencarian, filter kelas, pagination, modal tambah/edit, hapus, dan import CSV
 - Detail siswa dengan statistik, kalender bulanan, dan riwayat absensi
 - Manajemen kelas
-- Laporan bulanan per siswa
+- Laporan mingguan dan bulanan per siswa
 - Export laporan ke CSV
 - Print-friendly report
+- Rekap kegiatan guru: materi, aktivitas pembelajaran, jam mengajar, dan catatan harian
 - Role access: admin mengelola semua data, guru dibatasi pada kelas yang ditugaskan
 
 ## Setup Lokal
