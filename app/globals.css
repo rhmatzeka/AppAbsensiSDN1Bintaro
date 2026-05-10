@@ -38,6 +38,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.print-only {
+  display: none;
+}
+
 /* Smooth transitions for interactive elements */
 button,
 a,
@@ -160,15 +164,110 @@ textarea {
 }
 
 @media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
   .no-print {
     display: none !important;
   }
 
+  .print-only {
+    display: block !important;
+  }
+
   body {
     background: #ffffff;
+    color: #111827;
   }
 
   main {
     padding: 0 !important;
+  }
+
+  .print-report-header {
+    border-bottom: 2px solid #111827;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+  }
+
+  .print-report-header h2 {
+    font-size: 18px;
+    font-weight: 800;
+    margin: 0 0 4px;
+  }
+
+  .print-report-header p {
+    font-size: 11px;
+    margin: 1px 0;
+  }
+
+  .print-report-summary {
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .print-report-summary span {
+    border: 1px solid #d1d5db;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 5px 6px;
+  }
+
+  .print-section {
+    break-inside: auto;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .print-section + .print-section {
+    margin-top: 14px;
+  }
+
+  .print-section-title,
+  .print-section h2 {
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    margin: 0 0 6px !important;
+  }
+
+  .print-section p {
+    display: none !important;
+  }
+
+  table {
+    min-width: 0 !important;
+    width: 100% !important;
+    font-size: 9px !important;
+  }
+
+  th,
+  td {
+    border: 1px solid #d1d5db !important;
+    color: #111827 !important;
+    padding: 4px 5px !important;
+    vertical-align: top !important;
+  }
+
+  th {
+    background: #f3f4f6 !important;
+    font-size: 8px !important;
+  }
+
+  tr {
+    break-inside: avoid;
+  }
+
+  [class*="overflow-x-auto"] {
+    overflow: visible !important;
+  }
+
+  [class*="rounded-"],
+  [class*="shadow-"] {
+    box-shadow: none !important;
   }
 }

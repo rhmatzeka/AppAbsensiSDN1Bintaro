@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const page = Math.max(1, Number(searchParams.get("page") ?? "1"));
-  const limit = Math.min(100, Math.max(1, Number(searchParams.get("limit") ?? "20")));
+  const limit = Math.min(500, Math.max(1, Number(searchParams.get("limit") ?? "20")));
   const guruId = searchParams.get("guruId")?.trim();
   const kelasId = searchParams.get("kelasId")?.trim();
   const tanggal = searchParams.get("tanggal")?.trim();

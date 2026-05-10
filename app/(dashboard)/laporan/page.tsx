@@ -38,6 +38,7 @@ export default function LaporanPage() {
   const [tanggalAwal, setTanggalAwal] = useState(currentWeek.start);
   const [tanggalAkhir, setTanggalAkhir] = useState(currentWeek.end);
   const { data: kelas } = useKelas();
+  const selectedKelasName = useMemo(() => kelas?.find((item) => item.id === kelasId)?.nama ?? "Semua kelas", [kelas, kelasId]);
   const periodRange = useMemo(() => {
     if (periode === "mingguan") return { start: tanggalAwal, end: tanggalAkhir };
     return {
@@ -60,7 +61,7 @@ export default function LaporanPage() {
   const { data, isLoading } = useApi<RekapRow[]>(url);
   const { data: kegiatanData, isLoading: loadingKegiatan } = useKegiatan({
     page: 1,
-    limit: 100,
+    limit: 500,
     kelasId,
     tanggalAwal: periodRange.start,
     tanggalAkhir: periodRange.end
@@ -68,6 +69,17 @@ export default function LaporanPage() {
   const periodLabel = periode === "mingguan"
     ? `${tanggalAwal} sampai ${tanggalAkhir}`
     : `${BULAN[bulan - 1]} ${tahun}`;
+  const attendanceTotals = useMemo(() => {
+    return (data ?? []).reduce(
+      (totals, item) => ({
+        hadir: totals.hadir + item.HADIR,
+        sakit: totals.sakit + item.SAKIT,
+        izin: totals.izin + item.IZIN,
+        alpha: totals.alpha + item.ALPHA
+      }),
+      { hadir: 0, sakit: 0, izin: 0, alpha: 0 }
+    );
+  }, [data]);
 
   function exportCsv() {
     const header = ["NIS", "Nama", "Kelas", "Hadir", "Sakit", "Izin", "Alpha", "Persentase"];
@@ -108,16 +120,32 @@ export default function LaporanPage() {
       title="Laporan Absensi"
       description={`Rekap absensi ${periode} per siswa: ${periodLabel}.`}
       action={
-        <>
-          <Button type="button" variant="secondary" onClick={() => window.print()}>
+        <div className="no-print flex w-full flex-wrap items-center gap-2 sm:w-auto">
+          <Button type="button" variant="secondary" onClick={() => window.print()} disabled={isLoading || loadingKegiatan}>
             <Printer className="h-4 w-4" />Print
           </Button>
           <Button type="button" onClick={exportCsv} disabled={!data?.length && !kegiatanData?.items.length}>
             <Download className="h-4 w-4" />Export CSV
           </Button>
-        </>
+        </div>
       }
     >
+      <section className="print-only">
+        <div className="print-report-header">
+          <h2>Laporan Absensi dan Kegiatan Guru</h2>
+          <p>Periode: {periodLabel}</p>
+          <p>Kelas: {selectedKelasName}</p>
+        </div>
+        <div className="print-report-summary">
+          <span>Total siswa: {data?.length ?? 0}</span>
+          <span>Kegiatan: {kegiatanData?.items.length ?? 0}</span>
+          <span>Hadir: {attendanceTotals.hadir}</span>
+          <span>Sakit: {attendanceTotals.sakit}</span>
+          <span>Izin: {attendanceTotals.izin}</span>
+          <span>Alpha: {attendanceTotals.alpha}</span>
+        </div>
+      </section>
+
       {/* Filters */}
       <div className="no-print rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-subtle">
         <div className="mb-4 inline-flex rounded-xl border border-neutral-200 bg-neutral-50 p-1">
@@ -173,10 +201,10 @@ export default function LaporanPage() {
         </div>
       </div>
 
-      <section className="rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-subtle">
+      <section className="print-section rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-subtle">
         <div className="mb-4">
-          <h2 className="text-base font-bold text-neutral-900">Materi Pembelajaran</h2>
-          <p className="mt-0.5 text-sm text-neutral-500">Tema atau materi yang dicatat saat input absensi pada periode ini.</p>
+          <h2 className="text-base font-bold text-neutral-900">Rekap Kegiatan Guru</h2>
+          <p className="mt-0.5 text-sm text-neutral-500">Tema, materi, dan kegiatan yang dicatat pada periode ini.</p>
         </div>
         {loadingKegiatan ? (
           <Skeleton className="h-32" />
@@ -215,35 +243,38 @@ export default function LaporanPage() {
       </section>
 
       {/* Table */}
-      {isLoading ? <Skeleton className="h-96" /> : (
-        <Table>
-          <thead>
-            <tr>
-              <Th>NIS</Th><Th>Nama</Th><Th>Kelas</Th><Th>Hadir</Th><Th>Sakit</Th><Th>Izin</Th><Th>Alpha</Th><Th>% Kehadiran</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {(data ?? []).map((i) => (
-              <tr key={i.siswaId} className={`transition-colors ${i.persentase < 75 ? "bg-rose-50/50 hover:bg-rose-50" : "hover:bg-orange-50/30"}`}>
-                <Td className="font-mono text-xs text-neutral-500">{i.nis}</Td>
-                <Td className="font-semibold text-neutral-800">{i.nama}</Td>
-                <Td><span className="inline-flex rounded-lg bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600">{i.kelas}</span></Td>
-                <Td className="font-medium text-emerald-600">{i.HADIR}</Td>
-                <Td className="font-medium text-sky-600">{i.SAKIT}</Td>
-                <Td className="font-medium text-amber-600">{i.IZIN}</Td>
-                <Td className="font-medium text-rose-600">{i.ALPHA}</Td>
-                <Td>
-                  <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
-                    i.persentase < 75 ? "bg-rose-100 text-rose-700" : "bg-emerald-50 text-emerald-700"
-                  }`}>
-                    {i.persentase}%
-                  </span>
-                </Td>
+      <section className="print-section">
+        <div className="print-only print-section-title">Rekap Absensi Siswa</div>
+        {isLoading ? <Skeleton className="h-96" /> : (
+          <Table>
+            <thead>
+              <tr>
+                <Th>NIS</Th><Th>Nama</Th><Th>Kelas</Th><Th>Hadir</Th><Th>Sakit</Th><Th>Izin</Th><Th>Alpha</Th><Th>% Kehadiran</Th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-      )}
+            </thead>
+            <tbody>
+              {(data ?? []).map((i) => (
+                <tr key={i.siswaId} className={`transition-colors ${i.persentase < 75 ? "bg-rose-50/50 hover:bg-rose-50" : "hover:bg-orange-50/30"}`}>
+                  <Td className="font-mono text-xs text-neutral-500">{i.nis}</Td>
+                  <Td className="font-semibold text-neutral-800">{i.nama}</Td>
+                  <Td><span className="inline-flex rounded-lg bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600">{i.kelas}</span></Td>
+                  <Td className="font-medium text-emerald-600">{i.HADIR}</Td>
+                  <Td className="font-medium text-sky-600">{i.SAKIT}</Td>
+                  <Td className="font-medium text-amber-600">{i.IZIN}</Td>
+                  <Td className="font-medium text-rose-600">{i.ALPHA}</Td>
+                  <Td>
+                    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
+                      i.persentase < 75 ? "bg-rose-100 text-rose-700" : "bg-emerald-50 text-emerald-700"
+                    }`}>
+                      {i.persentase}%
+                    </span>
+                  </Td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+      </section>
     </PageShell>
   );
 }
