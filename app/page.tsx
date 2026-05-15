@@ -78,9 +78,9 @@ export default function HomePage() {
           sizes="100vw"
           className="absolute inset-0 -z-20 object-cover object-[center_top] saturate-110 sm:scale-[1.02] sm:object-center"
         />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,13,23,0.34)_0%,rgba(8,13,23,0.28)_48%,rgba(8,13,23,0.42)_82%,rgba(248,249,252,0.30)_100%)]" />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,13,23,0.34)_0%,rgba(8,13,23,0.28)_48%,rgba(8,13,23,0.42)_82%,rgba(8,13,23,0.24)_100%)] sm:bg-[linear-gradient(180deg,rgba(8,13,23,0.34)_0%,rgba(8,13,23,0.28)_48%,rgba(8,13,23,0.42)_82%,rgba(248,249,252,0.30)_100%)]" />
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.02)_0%,rgba(15,23,42,0.34)_88%)]" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-28 bg-gradient-to-b from-transparent via-[#F8F9FC]/35 to-[#F8F9FC]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 hidden h-28 bg-gradient-to-b from-transparent via-[#F8F9FC]/35 to-[#F8F9FC] sm:block" />
         <div className="relative z-10 mx-auto flex min-h-[calc(100svh-96px)] max-w-7xl items-center justify-center px-4 pb-20 pt-10 sm:px-6 lg:px-8 lg:pb-24 lg:pt-12">
           <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/95 px-4 py-2 text-xs font-bold uppercase tracking-widest text-orange-700 shadow-sm">

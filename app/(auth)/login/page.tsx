@@ -50,12 +50,12 @@ export default function LoginPage() {
         sizes="100vw"
         className="absolute inset-0 -z-30 object-cover object-[center_top] saturate-110 sm:object-center"
       />
-      <div className="absolute inset-0 -z-20 bg-[linear-gradient(135deg,rgba(248,249,252,0.82)_0%,rgba(248,249,252,0.68)_42%,rgba(15,23,42,0.50)_100%)]" />
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.48)_0%,rgba(255,255,255,0.12)_48%,rgba(15,23,42,0.42)_100%)]" />
+      <div className="absolute inset-0 -z-20 bg-[linear-gradient(135deg,rgba(8,13,23,0.34)_0%,rgba(8,13,23,0.18)_46%,rgba(8,13,23,0.58)_100%)]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.10)_0%,rgba(15,23,42,0.12)_48%,rgba(15,23,42,0.48)_100%)]" />
       <div className="grid min-h-0 place-items-center overflow-y-auto">
         <div className="w-full max-w-[420px] animate-slide-up">
           {/* Login card */}
-          <form onSubmit={onSubmit} className="rounded-2xl border border-white/50 bg-white/92 p-6 shadow-card backdrop-blur-xl sm:p-8">
+          <form onSubmit={onSubmit} className="rounded-2xl border border-white/55 bg-white/94 p-6 shadow-card backdrop-blur-xl sm:p-8">
             {/* Header */}
             <div className="mb-8 text-center">
               <Image src={logoSdnBintaro} alt="Logo SDN Bintaro 01" width={80} height={80} className="mx-auto h-20 w-20 object-contain" priority />
