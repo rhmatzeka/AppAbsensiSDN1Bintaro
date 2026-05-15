@@ -5,6 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
+import schoolBackground from "@/components/asset/background.jpeg";
 import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,16 +41,26 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="login-bg grid min-h-[100dvh] overflow-hidden px-4 py-4 sm:place-items-center">
+    <main className="relative isolate grid min-h-[100dvh] overflow-hidden px-4 py-4 sm:place-items-center">
+      <Image
+        src={schoolBackground}
+        alt="Gedung SDN Bintaro 01"
+        fill
+        priority
+        sizes="100vw"
+        className="absolute inset-0 -z-30 object-cover object-[center_top] saturate-110 sm:object-center"
+      />
+      <div className="absolute inset-0 -z-20 bg-[linear-gradient(135deg,rgba(248,249,252,0.82)_0%,rgba(248,249,252,0.68)_42%,rgba(15,23,42,0.50)_100%)]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.48)_0%,rgba(255,255,255,0.12)_48%,rgba(15,23,42,0.42)_100%)]" />
       <div className="grid min-h-0 place-items-center overflow-y-auto">
         <div className="w-full max-w-[420px] animate-slide-up">
           {/* Login card */}
-          <form onSubmit={onSubmit} className="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-card sm:p-8">
+          <form onSubmit={onSubmit} className="rounded-2xl border border-white/50 bg-white/92 p-6 shadow-card backdrop-blur-xl sm:p-8">
             {/* Header */}
             <div className="mb-8 text-center">
               <Image src={logoSdnBintaro} alt="Logo SDN Bintaro 01" width={80} height={80} className="mx-auto h-20 w-20 object-contain" priority />
               <h1 className="mt-5 text-xl font-bold text-neutral-900">Masuk ke Absensi</h1>
-              <p className="mt-1.5 text-sm text-neutral-500">SDN Bintaro 01 — Sistem Kehadiran Siswa</p>
+              <p className="mt-1.5 text-sm text-neutral-500">SDN Bintaro 01 Sistem Kehadiran Siswa</p>
             </div>
 
             {/* Fields */}
@@ -76,7 +87,7 @@ export default function LoginPage() {
           </form>
 
           {/* Footer */}
-          <p className="mt-6 text-center text-xs text-neutral-400">
+          <p className="mt-6 text-center text-xs font-medium text-white/80 [text-shadow:0_1px_10px_rgba(0,0,0,0.45)]">
             © 2026 SDN Bintaro 01. Aplikasi Absensi Siswa.
           </p>
         </div>
