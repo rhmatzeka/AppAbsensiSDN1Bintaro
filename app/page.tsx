@@ -93,13 +93,13 @@ export default function HomePage() {
             <p className="mt-4 max-w-3xl text-base leading-7 text-white/90 [text-shadow:0_2px_18px_rgba(0,0,0,0.42)] sm:text-lg lg:text-xl lg:leading-8">
               Sistem kehadiran siswa untuk membantu admin dan guru mengelola absensi harian, data kelas, rekap bulanan, dan laporan sekolah dalam satu dashboard.
             </p>
-            <div className="mt-5 grid w-full max-w-md grid-cols-3 gap-2 sm:mt-6 sm:flex sm:max-w-none sm:flex-wrap sm:justify-center sm:gap-2.5">
+            <div className="mt-5 grid w-full max-w-md grid-cols-3 gap-2 sm:mt-6 sm:flex sm:max-w-none sm:flex-wrap sm:justify-center sm:gap-3">
               {[
                 ["Admin", "Kelola data sekolah"],
                 ["Guru", "Input absensi kelas"],
                 ["Laporan", "Cetak dan export CSV"]
               ].map(([title, text]) => (
-                <div key={title} className="min-w-0 rounded-2xl border border-white/25 bg-white/12 px-2.5 py-2 text-center shadow-sm backdrop-blur-md sm:min-w-[170px] sm:rounded-full sm:px-5 sm:py-2.5 sm:text-left">
+                <div key={title} className="min-w-0 rounded-2xl border border-white/25 bg-white/12 px-2.5 py-2 text-center shadow-sm backdrop-blur-md sm:w-[220px] sm:rounded-full sm:px-6 sm:py-3">
                   <p className="truncate text-xs font-black text-white sm:text-sm">{title}</p>
                   <p className="mt-0.5 hidden text-xs font-semibold leading-5 text-white/70 sm:block">{text}</p>
                 </div>
