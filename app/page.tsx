@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, BarChart3, CalendarCheck, CheckCircle2, ClipboardCheck, FileSpreadsheet, GraduationCap, LogIn, Users } from "lucide-react";
+import schoolBackground from "@/components/asset/background.jpeg";
 import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
 
 const features = [
@@ -74,17 +75,27 @@ export default function HomePage() {
         </div>
       </header>
 
-      <section id="profil" className="relative overflow-hidden border-b border-neutral-200/70">
-        <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(420px,0.85fr)] lg:px-8 lg:py-12">
+      <section id="profil" className="relative isolate min-h-[calc(100vh-73px)] overflow-hidden border-b border-neutral-200/70">
+        <Image
+          src={schoolBackground}
+          alt="Gedung SDN Bintaro 01"
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 -z-20 object-cover object-center"
+        />
+        <div className="absolute inset-0 -z-10 bg-neutral-950/60" />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(15,23,42,0.82)_0%,rgba(15,23,42,0.68)_42%,rgba(15,23,42,0.38)_100%)]" />
+        <div className="mx-auto grid min-h-[calc(100vh-73px)] max-w-7xl items-center gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(420px,0.85fr)] lg:px-8 lg:py-14">
           <div className="max-w-[680px]">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-orange-200 bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-orange-700 shadow-sm">
               <GraduationCap className="h-4 w-4" />
               Profil Sekolah
             </div>
-            <h1 className="text-4xl font-black leading-[1.05] tracking-normal text-neutral-950 sm:text-5xl lg:text-[64px]">
+            <h1 className="text-4xl font-black leading-[1.05] tracking-normal text-white sm:text-5xl lg:text-[64px]">
               Absensi Digital SDN Bintaro 01
             </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-600 sm:text-lg">
+            <p className="mt-4 max-w-2xl text-base leading-7 text-white/85 sm:text-lg">
               Sistem kehadiran siswa untuk membantu admin dan guru mengelola absensi harian, data kelas, rekap bulanan, dan laporan sekolah dalam satu dashboard.
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-3">
@@ -93,7 +104,7 @@ export default function HomePage() {
                 ["Guru", "Input absensi kelas"],
                 ["Laporan", "Cetak dan export CSV"]
               ].map(([title, text]) => (
-                <div key={title} className="rounded-xl border border-neutral-200 bg-white p-3 shadow-sm">
+                <div key={title} className="rounded-xl border border-white/30 bg-white/90 p-3 shadow-sm backdrop-blur">
                   <p className="text-sm font-black text-neutral-950">{title}</p>
                   <p className="mt-1 text-xs font-semibold leading-5 text-neutral-500">{text}</p>
                 </div>
@@ -109,15 +120,15 @@ export default function HomePage() {
               </Link>
               <a
                 href="#fitur"
-                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-neutral-200 bg-white px-6 text-sm font-bold text-neutral-700 shadow-sm hover:border-neutral-300 hover:bg-neutral-50"
+                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/50 bg-white/90 px-6 text-sm font-bold text-neutral-800 shadow-sm backdrop-blur hover:bg-white"
               >
                 Lihat Fitur
               </a>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-card">
-            <div className="rounded-xl bg-[#F8F9FC] p-4">
+          <div className="rounded-2xl border border-white/30 bg-white/90 p-4 shadow-card backdrop-blur-md">
+            <div className="rounded-xl bg-white/75 p-4">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <Image src={logoSdnBintaro} alt="Logo SDN Bintaro 01" width={48} height={48} className="h-12 w-12 shrink-0 object-contain" />
