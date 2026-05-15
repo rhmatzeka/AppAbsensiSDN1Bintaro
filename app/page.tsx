@@ -78,10 +78,10 @@ export default function HomePage() {
           sizes="100vw"
           className="absolute inset-0 -z-20 scale-[1.02] object-cover object-center saturate-110"
         />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,13,23,0.42)_0%,rgba(8,13,23,0.36)_42%,rgba(8,13,23,0.58)_72%,rgba(248,249,252,0.96)_100%)]" />
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.04)_0%,rgba(15,23,42,0.42)_86%)]" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-64 bg-gradient-to-b from-transparent via-[#F8F9FC]/60 to-[#F8F9FC]" />
-        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-96px)] max-w-7xl items-center justify-center px-4 pb-36 pt-10 sm:px-6 lg:px-8 lg:pb-44 lg:pt-12">
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,13,23,0.40)_0%,rgba(8,13,23,0.34)_48%,rgba(8,13,23,0.46)_82%,rgba(248,249,252,0.30)_100%)]" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.03)_0%,rgba(15,23,42,0.38)_88%)]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-28 bg-gradient-to-b from-transparent via-[#F8F9FC]/35 to-[#F8F9FC]" />
+        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-96px)] max-w-7xl items-center justify-center px-4 pb-20 pt-10 sm:px-6 lg:px-8 lg:pb-24 lg:pt-12">
           <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/95 px-4 py-2 text-xs font-bold uppercase tracking-widest text-orange-700 shadow-sm">
               <GraduationCap className="h-4 w-4" />
@@ -125,7 +125,7 @@ export default function HomePage() {
       </section>
 
       <section id="fitur" className="bg-gradient-to-b from-[#F8F9FC] via-white to-white">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 pb-12 pt-8 sm:px-6 lg:px-8 lg:pt-10">
           <div className="max-w-2xl">
             <p className="text-xs font-bold uppercase tracking-widest text-orange-600">Fitur utama</p>
             <h2 className="mt-3 text-3xl font-black text-neutral-950">Dibuat untuk kebutuhan operasional sekolah.</h2>
