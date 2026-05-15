@@ -78,33 +78,34 @@ export default function HomePage() {
           sizes="100vw"
           className="absolute inset-0 -z-20 object-cover object-center"
         />
-        <div className="absolute inset-0 -z-10 bg-neutral-950/66" />
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.18)_0%,rgba(15,23,42,0.70)_72%)]" />
-        <div className="mx-auto flex min-h-[calc(100svh-150px)] max-w-7xl items-center justify-center px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+        <div className="absolute inset-0 -z-10 bg-neutral-950/64" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.12)_0%,rgba(15,23,42,0.68)_74%)]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-40 bg-gradient-to-b from-transparent via-[#111827]/55 to-[#F8F9FC]" />
+        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-112px)] max-w-7xl items-center justify-center px-4 pb-24 pt-12 sm:px-6 lg:px-8 lg:pb-28 lg:pt-14">
           <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/95 px-4 py-2 text-xs font-bold uppercase tracking-widest text-orange-700 shadow-sm">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/95 px-4 py-2 text-xs font-bold uppercase tracking-widest text-orange-700 shadow-sm">
               <GraduationCap className="h-4 w-4" />
               Profil Sekolah
             </div>
-            <h1 className="max-w-4xl text-4xl font-black leading-[1.04] tracking-normal text-white sm:text-6xl lg:text-[76px]">
+            <h1 className="max-w-4xl text-4xl font-black leading-[1.03] tracking-normal text-white sm:text-6xl lg:text-[68px] xl:text-[72px]">
               Absensi Digital SDN Bintaro 01
             </h1>
-            <p className="mt-5 max-w-3xl text-base leading-8 text-white/86 sm:text-xl">
+            <p className="mt-4 max-w-3xl text-base leading-7 text-white/86 sm:text-lg lg:text-xl lg:leading-8">
               Sistem kehadiran siswa untuk membantu admin dan guru mengelola absensi harian, data kelas, rekap bulanan, dan laporan sekolah dalam satu dashboard.
             </p>
-            <div className="mt-7 flex flex-wrap justify-center gap-3">
+            <div className="mt-6 flex flex-wrap justify-center gap-2.5">
               {[
                 ["Admin", "Kelola data sekolah"],
                 ["Guru", "Input absensi kelas"],
                 ["Laporan", "Cetak dan export CSV"]
               ].map(([title, text]) => (
-                <div key={title} className="min-w-[180px] rounded-full border border-white/25 bg-white/12 px-5 py-3 text-left shadow-sm backdrop-blur-md">
+                <div key={title} className="min-w-[170px] rounded-full border border-white/25 bg-white/12 px-5 py-2.5 text-left shadow-sm backdrop-blur-md">
                   <p className="text-sm font-black text-white">{title}</p>
                   <p className="mt-0.5 text-xs font-semibold leading-5 text-white/70">{text}</p>
                 </div>
               ))}
             </div>
-            <div className="mt-8 flex w-full max-w-md flex-col justify-center gap-3 sm:w-auto sm:max-w-none sm:flex-row">
+            <div className="mt-7 flex w-full max-w-md flex-col justify-center gap-3 sm:w-auto sm:max-w-none sm:flex-row">
               <Link
                 href="/login"
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-orange-400 to-orange-500 px-7 text-sm font-bold text-white shadow-sm hover:from-orange-500 hover:to-orange-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2"
@@ -123,7 +124,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="fitur" className="bg-white">
+      <section id="fitur" className="bg-gradient-to-b from-[#F8F9FC] via-white to-white">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="max-w-2xl">
             <p className="text-xs font-bold uppercase tracking-widest text-orange-600">Fitur utama</p>
