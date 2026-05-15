@@ -88,7 +88,8 @@ export default function HomePage() {
               Profil Sekolah
             </div>
             <h1 className="max-w-4xl text-4xl font-black leading-[1.03] tracking-normal text-white [text-shadow:0_4px_28px_rgba(0,0,0,0.45)] sm:text-6xl lg:text-[68px] xl:text-[72px]">
-              Absensi Digital SDN Bintaro 01
+              <span className="block">Absensi Digital</span>
+              <span className="block">SDN Bintaro 01</span>
             </h1>
             <p className="mt-4 max-w-3xl text-base leading-7 text-white/90 [text-shadow:0_2px_18px_rgba(0,0,0,0.42)] sm:text-lg lg:text-xl lg:leading-8">
               Sistem kehadiran siswa untuk membantu admin dan guru mengelola absensi harian, data kelas, rekap bulanan, dan laporan sekolah dalam satu dashboard.
