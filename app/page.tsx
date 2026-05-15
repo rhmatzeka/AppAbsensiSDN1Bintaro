@@ -126,20 +126,20 @@ export default function HomePage() {
 
       <section id="fitur" className="bg-gradient-to-b from-[#F8F9FC] via-white to-white">
         <div className="mx-auto max-w-7xl px-4 pb-12 pt-8 sm:px-6 lg:px-8 lg:pt-10">
-          <div className="max-w-2xl">
+          <div className="mx-auto max-w-3xl text-center">
             <p className="text-xs font-bold uppercase tracking-widest text-orange-600">Fitur utama</p>
-            <h2 className="mt-3 text-3xl font-black text-neutral-950">Dibuat untuk kebutuhan operasional sekolah.</h2>
+            <h2 className="mt-3 text-3xl font-black text-neutral-950 sm:text-4xl">Dibuat untuk kebutuhan operasional sekolah.</h2>
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {features.map((feature) => {
               const Icon = feature.icon;
               return (
-                <article key={feature.title} className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
-                  <div className="grid h-11 w-11 place-items-center rounded-xl bg-orange-50 text-orange-600">
+                <article key={feature.title} className="flex min-h-56 flex-col items-center rounded-2xl border border-neutral-200 bg-white p-6 text-center shadow-sm">
+                  <div className="grid h-12 w-12 place-items-center rounded-xl bg-orange-50 text-orange-600">
                     <Icon className="h-5 w-5" />
                   </div>
                   <h3 className="mt-5 text-lg font-black text-neutral-950">{feature.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-neutral-600">{feature.description}</p>
+                  <p className="mt-2 max-w-sm text-sm leading-6 text-neutral-600">{feature.description}</p>
                 </article>
               );
             })}
@@ -149,14 +149,12 @@ export default function HomePage() {
 
       <section id="alur" className="bg-[#F8F9FC]">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-          <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-orange-600">Alur penggunaan</p>
-              <h2 className="mt-3 text-3xl font-black leading-tight text-neutral-950 sm:text-4xl">
-                Dari data siswa sampai laporan bulanan.
-              </h2>
-            </div>
-            <p className="max-w-2xl text-base leading-7 text-neutral-600 lg:justify-self-end">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-xs font-bold uppercase tracking-widest text-orange-600">Alur penggunaan</p>
+            <h2 className="mt-3 text-3xl font-black leading-tight text-neutral-950 sm:text-4xl">
+              Dari data siswa sampai laporan bulanan.
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-neutral-600">
               Proses dibuat singkat supaya guru bisa fokus mengajar, sementara admin tetap mendapatkan data kehadiran yang siap direkap.
             </p>
           </div>
@@ -165,23 +163,23 @@ export default function HomePage() {
             {workflow.map((item, index) => {
               const Icon = item.icon;
               return (
-                <article key={item.title} className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
-                  <div className="flex items-center justify-between gap-4">
+                <article key={item.title} className="relative flex min-h-56 flex-col items-center overflow-hidden rounded-2xl border border-neutral-200 bg-white p-6 text-center shadow-sm">
+                  <span className="absolute right-5 top-4 text-5xl font-black leading-none text-orange-100">{index + 1}</span>
+                  <div className="relative z-10">
                     <div className="grid h-12 w-12 place-items-center rounded-xl bg-orange-50 text-orange-600">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <span className="text-5xl font-black leading-none text-orange-100">{index + 1}</span>
                   </div>
-                  <h3 className="mt-5 text-lg font-black text-neutral-950">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-neutral-600">{item.description}</p>
+                  <h3 className="relative z-10 mt-5 text-lg font-black text-neutral-950">{item.title}</h3>
+                  <p className="relative z-10 mt-2 max-w-sm text-sm leading-6 text-neutral-600">{item.description}</p>
                 </article>
               );
             })}
           </div>
 
           <div className="mt-5 rounded-2xl border border-orange-100 bg-orange-50/70 p-5">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
+            <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
+              <div className="max-w-xl">
                 <p className="text-sm font-black text-orange-900">Siap digunakan untuk operasional sekolah</p>
                 <p className="mt-1 text-sm leading-6 text-orange-800/80">Masuk sebagai admin atau guru untuk mulai mengelola absensi.</p>
               </div>
@@ -195,9 +193,9 @@ export default function HomePage() {
       </section>
 
       <footer className="border-t border-neutral-200 bg-white">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1.1fr_0.75fr_0.75fr_0.9fr] lg:px-8">
-          <div>
-            <div className="flex items-center gap-3">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 text-center sm:px-6 md:grid-cols-2 md:text-left lg:grid-cols-[1.05fr_0.7fr_0.7fr_0.9fr] lg:px-8">
+          <div className="mx-auto max-w-sm md:mx-0">
+            <div className="flex items-center justify-center gap-3 md:justify-start">
               <Image src={logoSdnBintaro} alt="Logo SDN Bintaro 01" width={48} height={48} className="h-12 w-12 shrink-0 object-contain" />
               <div>
                 <p className="text-base font-black text-neutral-950">SDN Bintaro 01</p>
@@ -227,8 +225,8 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-neutral-200 bg-[#F8F9FC] p-4">
-            <div className="grid h-10 w-10 place-items-center rounded-xl bg-white text-orange-600 shadow-sm">
+          <div className="rounded-2xl border border-neutral-200 bg-[#F8F9FC] p-4 md:col-span-2 lg:col-span-1">
+            <div className="mx-auto grid h-10 w-10 place-items-center rounded-xl bg-white text-orange-600 shadow-sm md:mx-0">
               <LogIn className="h-5 w-5" />
             </div>
             <p className="mt-4 text-sm font-black text-neutral-950">Masuk ke sistem</p>
@@ -241,7 +239,7 @@ export default function HomePage() {
         </div>
 
         <div className="border-t border-neutral-100">
-          <div className="mx-auto flex max-w-7xl px-4 py-4 text-xs font-medium text-neutral-500 sm:px-6 lg:px-8">
+          <div className="mx-auto flex max-w-7xl justify-center px-4 py-4 text-center text-xs font-medium text-neutral-500 sm:px-6 lg:px-8">
             <p>(c) 2026 SDN Bintaro 01. Aplikasi Absensi Siswa.</p>
           </div>
         </div>
