@@ -5,7 +5,9 @@ import React, { useEffect, useMemo, useRef, useState, type SelectHTMLAttributes 
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 
-type SelectProps = SelectHTMLAttributes<HTMLSelectElement>;
+type SelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
+  optionClassName?: (option: SelectOption, active: boolean) => string;
+};
 type SelectOption = {
   value: string;
   label: string;
@@ -50,23 +52,25 @@ function dropdownStyle(rect: DOMRect, itemCount: number): React.CSSProperties {
   return { left, top: rect.bottom + margin, width, maxHeight };
 }
 
-export function Select({ className, children, value, defaultValue, onChange, disabled, name, id, required }: SelectProps) {
+export function Select({ className, children, value, defaultValue, onChange, disabled, name, id, required, optionClassName }: SelectProps) {
   const options = useMemo(() => readOptions(children), [children]);
   const [internalValue, setInternalValue] = useState(String(defaultValue ?? options[0]?.value ?? ""));
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [rect, setRect] = useState<DOMRect | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const currentValue = value !== undefined ? String(value) : internalValue;
   const selected = options.find((option) => option.value === currentValue);
-  const filtered = options.filter((option) => option.label.toLowerCase().includes(query.toLowerCase().trim()));
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    setActiveIndex(Math.max(0, options.findIndex((option) => option.value === currentValue)));
+  }, [currentValue, options]);
 
   useEffect(() => {
     if (!open) return;
@@ -85,7 +89,6 @@ export function Select({ className, children, value, defaultValue, onChange, dis
     window.addEventListener("resize", updateRect);
     window.addEventListener("scroll", updateRect, true);
     document.addEventListener("pointerdown", onPointerDown);
-    window.setTimeout(() => inputRef.current?.focus(), 0);
 
     return () => {
       window.removeEventListener("resize", updateRect);
@@ -99,14 +102,71 @@ export function Select({ className, children, value, defaultValue, onChange, dis
     if (value === undefined) setInternalValue(nextValue);
     onChange?.(fakeEvent);
     setOpen(false);
-    setQuery("");
   }
 
   function openList() {
     if (disabled) return;
     setRect(rootRef.current?.getBoundingClientRect() ?? null);
-    setQuery("");
+    setActiveIndex(Math.max(0, options.findIndex((option) => option.value === currentValue)));
     setOpen(true);
+  }
+
+  function moveActive(direction: 1 | -1) {
+    if (!options.length) return;
+    let next = activeIndex;
+    for (let count = 0; count < options.length; count += 1) {
+      next = (next + direction + options.length) % options.length;
+      if (!options[next]?.disabled) {
+        setActiveIndex(next);
+        return;
+      }
+    }
+  }
+
+  function onKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      if (!open) openList();
+      else moveActive(1);
+      return;
+    }
+
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      if (!open) openList();
+      else moveActive(-1);
+      return;
+    }
+
+    if (event.key === "Home" && open) {
+      event.preventDefault();
+      const firstEnabled = options.findIndex((option) => !option.disabled);
+      if (firstEnabled >= 0) setActiveIndex(firstEnabled);
+      return;
+    }
+
+    if (event.key === "End" && open) {
+      event.preventDefault();
+      for (let index = options.length - 1; index >= 0; index -= 1) {
+        if (!options[index]?.disabled) {
+          setActiveIndex(index);
+          break;
+        }
+      }
+      return;
+    }
+
+    if (event.key === "Escape" && open) {
+      event.preventDefault();
+      setOpen(false);
+      return;
+    }
+
+    if ((event.key === "Enter" || event.key === " ") && open) {
+      event.preventDefault();
+      const option = options[activeIndex];
+      if (option && !option.disabled) selectValue(option.value);
+    }
   }
 
   return (
@@ -122,25 +182,11 @@ export function Select({ className, children, value, defaultValue, onChange, dis
           className
         )}
         onClick={() => (open ? setOpen(false) : openList())}
+        onKeyDown={onKeyDown}
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        {open ? (
-          <input
-            ref={inputRef}
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            onClick={(event) => event.stopPropagation()}
-            onKeyDown={(event) => {
-              if (event.key === "Escape") setOpen(false);
-              if (event.key === "Enter" && filtered[0] && !filtered[0].disabled) selectValue(filtered[0].value);
-            }}
-            className="w-0 min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-neutral-800 outline-none placeholder:text-neutral-400 focus:ring-0"
-            placeholder={selected?.label ?? "Cari pilihan..."}
-          />
-        ) : (
-          <span className="min-w-0 truncate">{selected?.label ?? "Pilih"}</span>
-        )}
+        <span className="min-w-0 truncate">{selected?.label ?? "Pilih"}</span>
         <ChevronDown className={cn("h-4 w-4 shrink-0 text-neutral-400 transition-transform group-hover:text-neutral-600", open && "rotate-180 text-orange-500")} />
       </button>
 
@@ -148,12 +194,13 @@ export function Select({ className, children, value, defaultValue, onChange, dis
         <div
           ref={listRef}
           className="fixed z-[220] overflow-hidden rounded-2xl border border-neutral-200 bg-white p-1.5 shadow-card"
-          style={dropdownStyle(rect, filtered.length)}
+          style={dropdownStyle(rect, options.length)}
           role="listbox"
         >
           <div className="max-h-[inherit] overflow-y-auto">
-            {filtered.length ? filtered.map((option) => {
+            {options.length ? options.map((option, index) => {
               const active = option.value === currentValue;
+              const highlighted = index === activeIndex;
               return (
                 <button
                   key={option.value}
@@ -162,11 +209,14 @@ export function Select({ className, children, value, defaultValue, onChange, dis
                   className={cn(
                     "flex min-h-10 w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-sm font-medium outline-none transition-colors",
                     active ? "bg-orange-50 text-orange-700" : "text-neutral-700 hover:bg-neutral-50",
-                    option.disabled && "cursor-not-allowed opacity-45"
+                    highlighted && !active && "bg-neutral-50",
+                    option.disabled && "cursor-not-allowed opacity-45",
+                    optionClassName?.(option, active)
                   )}
                   onClick={() => selectValue(option.value)}
                   role="option"
                   aria-selected={active}
+                  data-active={active}
                 >
                   <span className="min-w-0 truncate">{option.label}</span>
                   {active ? <Check className="h-4 w-4 shrink-0" /> : null}

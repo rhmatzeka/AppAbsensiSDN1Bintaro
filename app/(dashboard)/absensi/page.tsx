@@ -16,7 +16,7 @@ import { useAbsensi } from "@/hooks/useAbsensi";
 import { useKegiatan } from "@/hooks/useKegiatan";
 import { useKelas } from "@/hooks/useKelas";
 import { useSiswa } from "@/hooks/useSiswa";
-import { toDateInputValue } from "@/lib/utils";
+import { cn, toDateInputValue } from "@/lib/utils";
 import { ATTENDANCE_STATUSES, type AttendanceStatus } from "@/types";
 
 type FormRow = {
@@ -37,6 +37,19 @@ type KegiatanForm = {
 
 const statuses = ATTENDANCE_STATUSES;
 const emptyKegiatan: KegiatanForm = { jamMulai: "", jamSelesai: "", materi: "", kegiatan: "", catatan: "" };
+const statusSelectStyles: Record<AttendanceStatus, string> = {
+  HADIR: "border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300 focus:border-emerald-400 focus:ring-emerald-400/20",
+  SAKIT: "border-sky-200 bg-sky-50 text-sky-700 hover:border-sky-300 focus:border-sky-400 focus:ring-sky-400/20",
+  IZIN: "border-amber-200 bg-amber-50 text-amber-700 hover:border-amber-300 focus:border-amber-400 focus:ring-amber-400/20",
+  ALPHA: "border-rose-200 bg-rose-50 text-rose-700 hover:border-rose-300 focus:border-rose-400 focus:ring-rose-400/20"
+};
+
+const statusOptionStyles: Record<AttendanceStatus, string> = {
+  HADIR: "data-[active=true]:bg-emerald-50 data-[active=true]:text-emerald-700",
+  SAKIT: "data-[active=true]:bg-sky-50 data-[active=true]:text-sky-700",
+  IZIN: "data-[active=true]:bg-amber-50 data-[active=true]:text-amber-700",
+  ALPHA: "data-[active=true]:bg-rose-50 data-[active=true]:text-rose-700"
+};
 
 export default function AbsensiPage() {
   const { data: session } = useSession();
@@ -284,7 +297,14 @@ export default function AbsensiPage() {
                   <Td className="font-mono text-xs text-neutral-500">{siswa.nis}</Td>
                   <Td className="font-semibold text-neutral-800">{siswa.nama}</Td>
                   <Td className="w-36">
-                    <Select value={row?.status ?? "HADIR"} onChange={(event) => updateRow(siswa.id, { status: event.target.value as AttendanceStatus })} className="min-h-9 py-1.5 text-xs font-semibold">
+                    <Select
+                      value={row?.status ?? "HADIR"}
+                      onChange={(event) => updateRow(siswa.id, { status: event.target.value as AttendanceStatus })}
+                      className={cn("min-h-10 rounded-full px-4 py-2 text-xs font-bold shadow-sm", statusSelectStyles[row?.status ?? "HADIR"])}
+                      optionClassName={(option, active) =>
+                        cn(statusOptionStyles[option.value as AttendanceStatus], active && "font-bold")
+                      }
+                    >
                       {statuses.map((status) => (
                         <option key={status} value={status}>
                           {status}
