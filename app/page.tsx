@@ -69,28 +69,28 @@ export default function HomePage() {
         </div>
       </header>
 
-      <section id="profil" className="relative isolate overflow-hidden border-b border-neutral-200/70">
+      <section id="profil" className="relative isolate overflow-hidden bg-[#F8F9FC]">
         <Image
           src={schoolBackground}
           alt="Gedung SDN Bintaro 01"
           fill
           priority
           sizes="100vw"
-          className="absolute inset-0 -z-20 object-cover object-center"
+          className="absolute inset-0 -z-20 scale-[1.02] object-cover object-center saturate-110"
         />
-        <div className="absolute inset-0 -z-10 bg-neutral-950/64" />
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.12)_0%,rgba(15,23,42,0.68)_74%)]" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-40 bg-gradient-to-b from-transparent via-[#111827]/55 to-[#F8F9FC]" />
-        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-112px)] max-w-7xl items-center justify-center px-4 pb-24 pt-12 sm:px-6 lg:px-8 lg:pb-28 lg:pt-14">
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,13,23,0.42)_0%,rgba(8,13,23,0.36)_42%,rgba(8,13,23,0.58)_72%,rgba(248,249,252,0.96)_100%)]" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.04)_0%,rgba(15,23,42,0.42)_86%)]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-64 bg-gradient-to-b from-transparent via-[#F8F9FC]/60 to-[#F8F9FC]" />
+        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-96px)] max-w-7xl items-center justify-center px-4 pb-36 pt-10 sm:px-6 lg:px-8 lg:pb-44 lg:pt-12">
           <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/95 px-4 py-2 text-xs font-bold uppercase tracking-widest text-orange-700 shadow-sm">
               <GraduationCap className="h-4 w-4" />
               Profil Sekolah
             </div>
-            <h1 className="max-w-4xl text-4xl font-black leading-[1.03] tracking-normal text-white sm:text-6xl lg:text-[68px] xl:text-[72px]">
+            <h1 className="max-w-4xl text-4xl font-black leading-[1.03] tracking-normal text-white [text-shadow:0_4px_28px_rgba(0,0,0,0.45)] sm:text-6xl lg:text-[68px] xl:text-[72px]">
               Absensi Digital SDN Bintaro 01
             </h1>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-white/86 sm:text-lg lg:text-xl lg:leading-8">
+            <p className="mt-4 max-w-3xl text-base leading-7 text-white/90 [text-shadow:0_2px_18px_rgba(0,0,0,0.42)] sm:text-lg lg:text-xl lg:leading-8">
               Sistem kehadiran siswa untuk membantu admin dan guru mengelola absensi harian, data kelas, rekap bulanan, dan laporan sekolah dalam satu dashboard.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-2.5">
