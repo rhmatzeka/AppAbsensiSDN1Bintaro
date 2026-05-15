@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, BarChart3, CalendarCheck, CheckCircle2, ClipboardCheck, FileSpreadsheet, GraduationCap, LogIn, Users } from "lucide-react";
+import { ArrowRight, BarChart3, CalendarCheck, ClipboardCheck, FileSpreadsheet, GraduationCap, LogIn, Users } from "lucide-react";
 import schoolBackground from "@/components/asset/background.jpeg";
 import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
 
@@ -20,12 +20,6 @@ const features = [
     description: "Rekap kehadiran siap dicetak atau diekspor untuk kebutuhan administrasi sekolah.",
     icon: BarChart3
   }
-];
-
-const stats = [
-  { value: "6", label: "Tingkat kelas" },
-  { value: "72+", label: "Data siswa demo" },
-  { value: "4", label: "Status absensi" }
 ];
 
 const workflow = [
@@ -75,7 +69,7 @@ export default function HomePage() {
         </div>
       </header>
 
-      <section id="profil" className="relative isolate min-h-[calc(100vh-73px)] overflow-hidden border-b border-neutral-200/70">
+      <section id="profil" className="relative isolate overflow-hidden border-b border-neutral-200/70">
         <Image
           src={schoolBackground}
           alt="Gedung SDN Bintaro 01"
@@ -84,79 +78,46 @@ export default function HomePage() {
           sizes="100vw"
           className="absolute inset-0 -z-20 object-cover object-center"
         />
-        <div className="absolute inset-0 -z-10 bg-neutral-950/60" />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(15,23,42,0.82)_0%,rgba(15,23,42,0.68)_42%,rgba(15,23,42,0.38)_100%)]" />
-        <div className="mx-auto grid min-h-[calc(100vh-73px)] max-w-7xl items-center gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(420px,0.85fr)] lg:px-8 lg:py-14">
-          <div className="max-w-[680px]">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-orange-200 bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-orange-700 shadow-sm">
+        <div className="absolute inset-0 -z-10 bg-neutral-950/66" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.18)_0%,rgba(15,23,42,0.70)_72%)]" />
+        <div className="mx-auto flex min-h-[calc(100svh-150px)] max-w-7xl items-center justify-center px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+          <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/95 px-4 py-2 text-xs font-bold uppercase tracking-widest text-orange-700 shadow-sm">
               <GraduationCap className="h-4 w-4" />
               Profil Sekolah
             </div>
-            <h1 className="text-4xl font-black leading-[1.05] tracking-normal text-white sm:text-5xl lg:text-[64px]">
+            <h1 className="max-w-4xl text-4xl font-black leading-[1.04] tracking-normal text-white sm:text-6xl lg:text-[76px]">
               Absensi Digital SDN Bintaro 01
             </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-white/85 sm:text-lg">
+            <p className="mt-5 max-w-3xl text-base leading-8 text-white/86 sm:text-xl">
               Sistem kehadiran siswa untuk membantu admin dan guru mengelola absensi harian, data kelas, rekap bulanan, dan laporan sekolah dalam satu dashboard.
             </p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
               {[
                 ["Admin", "Kelola data sekolah"],
                 ["Guru", "Input absensi kelas"],
                 ["Laporan", "Cetak dan export CSV"]
               ].map(([title, text]) => (
-                <div key={title} className="rounded-xl border border-white/30 bg-white/90 p-3 shadow-sm backdrop-blur">
-                  <p className="text-sm font-black text-neutral-950">{title}</p>
-                  <p className="mt-1 text-xs font-semibold leading-5 text-neutral-500">{text}</p>
+                <div key={title} className="min-w-[180px] rounded-full border border-white/25 bg-white/12 px-5 py-3 text-left shadow-sm backdrop-blur-md">
+                  <p className="text-sm font-black text-white">{title}</p>
+                  <p className="mt-0.5 text-xs font-semibold leading-5 text-white/70">{text}</p>
                 </div>
               ))}
             </div>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex w-full max-w-md flex-col justify-center gap-3 sm:w-auto sm:max-w-none sm:flex-row">
               <Link
                 href="/login"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-orange-400 to-orange-500 px-6 text-sm font-bold text-white shadow-sm hover:from-orange-500 hover:to-orange-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-orange-400 to-orange-500 px-7 text-sm font-bold text-white shadow-sm hover:from-orange-500 hover:to-orange-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2"
               >
                 Masuk ke Aplikasi
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <a
                 href="#fitur"
-                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/50 bg-white/90 px-6 text-sm font-bold text-neutral-800 shadow-sm backdrop-blur hover:bg-white"
+                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/40 bg-white/12 px-7 text-sm font-bold text-white shadow-sm backdrop-blur-md hover:bg-white/18"
               >
                 Lihat Fitur
               </a>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-white/30 bg-white/90 p-4 shadow-card backdrop-blur-md">
-            <div className="rounded-xl bg-white/75 p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <Image src={logoSdnBintaro} alt="Logo SDN Bintaro 01" width={48} height={48} className="h-12 w-12 shrink-0 object-contain" />
-                  <div>
-                    <p className="text-sm font-bold text-neutral-950">Dashboard Absensi</p>
-                    <p className="text-xs text-neutral-500">Ringkasan hari ini</p>
-                  </div>
-                </div>
-                <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">Aktif</span>
-              </div>
-
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                {stats.map((item) => (
-                  <div key={item.label} className="rounded-xl border border-neutral-200 bg-white p-3">
-                    <p className="text-2xl font-black text-neutral-950">{item.value}</p>
-                    <p className="mt-1 text-xs font-semibold text-neutral-500">{item.label}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-4 space-y-3">
-                {["Input absensi per kelas", "Pantau siswa tidak hadir", "Cetak rekap bulanan"].map((item) => (
-                  <div key={item} className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-3 py-2.5">
-                    <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
-                    <span className="text-sm font-semibold text-neutral-700">{item}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
