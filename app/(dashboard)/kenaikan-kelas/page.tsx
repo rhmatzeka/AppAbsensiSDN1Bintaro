@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { ArrowRight, GraduationCap, Save, UsersRound } from "lucide-react";
+import { ArrowRight, GraduationCap, Save, Search, UsersRound } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { PageShell } from "@/components/layout/page-shell";
 import { Badge } from "@/components/ui/badge";
@@ -82,6 +82,7 @@ export default function KenaikanKelasPage() {
   const { showToast } = useToast();
   const [tahunAjarAsal, setTahunAjarAsal] = useState("");
   const [tahunAjarBaru, setTahunAjarBaru] = useState("");
+  const [search, setSearch] = useState("");
   const [rows, setRows] = useState<Record<string, RowState>>({});
   const [saving, setSaving] = useState(false);
   const isAdmin = session?.user.role === "ADMIN";
@@ -90,6 +91,16 @@ export default function KenaikanKelasPage() {
   const tahunAjar = useMemo(() => data?.tahunAjar ?? [], [data?.tahunAjar]);
   const targetClasses = useMemo(() => data?.targetClasses ?? [], [data?.targetClasses]);
   const students = useMemo(() => data?.siswa ?? [], [data?.siswa]);
+  const filteredStudents = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+    if (!keyword) return students;
+
+    return students.filter((siswa) => {
+      const row = rows[siswa.id];
+      const actionLabel = row?.action ? actionLabels[row.action].toLowerCase() : "";
+      return [siswa.nis, siswa.nama, siswa.kelas.nama, actionLabel].some((value) => value.toLowerCase().includes(keyword));
+    });
+  }, [rows, search, students]);
 
   useEffect(() => {
     if (!tahunAjar.length) return;
@@ -237,6 +248,23 @@ export default function KenaikanKelasPage() {
         </div>
       ) : null}
 
+      {students.length ? (
+        <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-center">
+          <label className="relative block">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+            <Input
+              className="pl-10"
+              placeholder="Cari NIS, nama, kelas, atau keputusan"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+          </label>
+          <p className="text-sm font-medium text-neutral-500">
+            {filteredStudents.length} dari {students.length} siswa
+          </p>
+        </div>
+      ) : null}
+
       {isLoading ? (
         <Skeleton className="h-96" />
       ) : !tahunAjar.length ? (
@@ -245,6 +273,8 @@ export default function KenaikanKelasPage() {
         <EmptyState title="Kelas tujuan belum ada" description="Buat kelas untuk tahun ajaran tujuan di menu Kelas." />
       ) : !students.length ? (
         <EmptyState title="Tidak ada siswa aktif" description="Pilih tahun ajaran asal yang masih memiliki siswa aktif." />
+      ) : !filteredStudents.length ? (
+        <EmptyState title="Siswa tidak ditemukan" description="Ubah kata kunci pencarian untuk melihat data siswa." />
       ) : (
         <Table className="min-w-[980px]">
           <thead>
@@ -258,7 +288,7 @@ export default function KenaikanKelasPage() {
             </tr>
           </thead>
           <tbody>
-            {students.map((siswa) => {
+            {filteredStudents.map((siswa) => {
               const row = rows[siswa.id] ?? { action: "NAIK", targetKelasId: "", catatan: "" };
               const terminal = !needsTarget(row.action);
               return (

@@ -1,8 +1,8 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { Edit2, Plus, Trash2, UserCog } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { Edit2, Plus, Search, Trash2, UserCog } from "lucide-react";
+import { FormEvent, useMemo, useState } from "react";
 import { PageShell } from "@/components/layout/page-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,11 +34,22 @@ export default function PenggunaPage() {
   const { showToast } = useToast();
   const { data, isLoading, mutate } = useUsers();
   const { data: kelas } = useKelas();
+  const [search, setSearch] = useState("");
   const [form, setForm] = useState<UserForm>(emptyForm);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const isAdmin = session?.user.role === "ADMIN";
   const kelasOptions = kelas ?? [];
+  const users = useMemo(() => data ?? [], [data]);
+  const filteredUsers = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+    if (!keyword) return users;
+
+    return users.filter((user) => {
+      const roleLabel = user.role === "ADMIN" ? "admin" : "guru";
+      return [user.name, user.email, roleLabel, user.kelas?.nama ?? ""].some((value) => value.toLowerCase().includes(keyword));
+    });
+  }, [search, users]);
 
   function openCreate() {
     setForm({ ...emptyForm, kelasId: kelasOptions[0]?.id ?? "" });
@@ -128,10 +139,27 @@ export default function PenggunaPage() {
         </Button>
       }
     >
+      <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-center">
+        <label className="relative block">
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+          <Input
+            className="pl-10"
+            placeholder="Cari nama, email, role, atau kelas"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+        </label>
+        <p className="text-sm font-medium text-neutral-500">
+          {filteredUsers.length} dari {users.length} user
+        </p>
+      </div>
+
       {isLoading ? (
         <Skeleton className="h-80" />
-      ) : !data?.length ? (
+      ) : !users.length ? (
         <EmptyState title="User belum ada" description="Tambahkan user untuk mulai mengatur akses aplikasi." />
+      ) : !filteredUsers.length ? (
+        <EmptyState title="User tidak ditemukan" description="Ubah kata kunci pencarian untuk melihat data user." />
       ) : (
         <Table>
           <thead>
@@ -145,7 +173,7 @@ export default function PenggunaPage() {
             </tr>
           </thead>
           <tbody>
-            {data.map((user) => (
+            {filteredUsers.map((user) => (
               <tr key={user.id} className="transition-colors hover:bg-orange-50/30">
                 <Td className="font-semibold text-neutral-800">{user.name}</Td>
                 <Td className="font-mono text-xs text-neutral-500">{user.email}</Td>
