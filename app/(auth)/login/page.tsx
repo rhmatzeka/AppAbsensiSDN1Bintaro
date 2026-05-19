@@ -67,7 +67,7 @@ export default function LoginPage() {
             <div className="space-y-4">
               <label className="block">
                 <span className="mb-2 block text-sm font-semibold text-neutral-700">Email</span>
-                <Input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" placeholder="nama@sekolah.sch.id" />
+                <Input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" placeholder="Masukkan email" />
               </label>
 
               <label className="block">
