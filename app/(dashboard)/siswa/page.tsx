@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Edit2, Eye, Plus, Search, Trash2, Upload } from "lucide-react";
+import { AlertTriangle, Edit2, Eye, Plus, Search, Trash2, Upload } from "lucide-react";
 import { FormEvent, useMemo, useState } from "react";
 import { PageShell } from "@/components/layout/page-shell";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ export default function SiswaPage() {
   const [form, setForm] = useState<SiswaForm>(emptyForm);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deletingAll, setDeletingAll] = useState(false);
   const [csvPreview, setCsvPreview] = useState<SiswaForm[]>([]);
   const { data: kelas } = useKelas();
   const { data, isLoading, mutate } = useSiswa({ page, search, kelasId });
@@ -92,6 +93,37 @@ export default function SiswaPage() {
     await mutate(); showToast("Siswa berhasil dihapus");
   }
 
+  async function removeAll() {
+    const total = data?.total ?? 0;
+    if (!total) return;
+
+    const selectedClass = kelasOptions.find((item) => item.id === kelasId)?.nama;
+    const scope = [
+      search.trim() ? `pencarian "${search.trim()}"` : null,
+      selectedClass ? `kelas ${selectedClass}` : null
+    ].filter(Boolean).join(" dan ") || "semua kelas";
+    const confirmation = window.prompt(`Aksi ini akan menghapus ${total} siswa aktif untuk ${scope}. Riwayat absensi siswa terkait juga ikut terhapus. Ketik HAPUS untuk lanjut.`);
+    if (confirmation !== "HAPUS") return;
+
+    const params = new URLSearchParams();
+    if (search.trim()) params.set("search", search.trim());
+    if (kelasId) params.set("kelasId", kelasId);
+
+    setDeletingAll(true);
+    const r = await fetch(`/api/siswa${params.toString() ? `?${params.toString()}` : ""}`, { method: "DELETE" });
+    setDeletingAll(false);
+    if (!r.ok) {
+      const err = (await r.json().catch(() => ({ message: "Gagal menghapus data siswa" }))) as { message?: string };
+      showToast(err.message ?? "Gagal menghapus data siswa", "error");
+      return;
+    }
+
+    const result = (await r.json()) as { deleted?: number };
+    setPage(1);
+    await mutate();
+    showToast(`${result.deleted ?? total} siswa berhasil dihapus`);
+  }
+
   function parseCsv(text: string) {
     const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
     const [, ...body] = lines;
@@ -114,10 +146,11 @@ export default function SiswaPage() {
 
   return (
     <PageShell title="Manajemen Siswa" description="Kelola data siswa, filter berdasarkan kelas, dan import CSV." action={isAdmin ? <Button type="button" onClick={openCreate}><Plus className="h-4 w-4" />Tambah Siswa</Button> : null}>
-      <div className="grid gap-3 lg:grid-cols-[1fr_240px_220px]">
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px_190px_180px]">
         <label className="relative block"><Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" /><Input className="pl-10" placeholder="Cari nama atau NIS" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} /></label>
         <Select value={kelasId} onChange={(e) => { setKelasId(e.target.value); setPage(1); }}><option value="">Semua kelas</option>{kelasOptions.map((i) => <option key={i.id} value={i.id}>{i.nama}</option>)}</Select>
         {isAdmin ? <label className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-600 hover:bg-neutral-50 hover:border-neutral-300"><Upload className="h-4 w-4" />Import CSV<input type="file" accept=".csv,text/csv" className="sr-only" onChange={async (e) => { const f = e.target.files?.[0]; if (f) parseCsv(await f.text()); e.target.value = ""; }} /></label> : null}
+        {isAdmin ? <Button type="button" variant="danger" loading={deletingAll} disabled={!data?.total || isLoading} onClick={() => void removeAll()}><AlertTriangle className="h-4 w-4" />Hapus Semua</Button> : null}
       </div>
 
       {csvPreview.length ? <div className="rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-subtle"><div className="mb-3 flex items-center justify-between gap-3"><p className="text-sm font-bold text-neutral-800">Preview CSV: {csvPreview.length} siswa</p><Button type="button" onClick={importCsv}>Simpan Import</Button></div><p className="text-xs text-neutral-500">Format: nis,nama,jenisKelamin,kelas,alamat</p></div> : null}

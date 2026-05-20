@@ -105,3 +105,30 @@ export async function POST(request: NextRequest) {
     return jsonError(error);
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  const { user, response } = await requireUser();
+  if (response) return response;
+  const forbidden = requireAdmin(user.role);
+  if (forbidden) return forbidden;
+
+  const { searchParams } = new URL(request.url);
+  const search = searchParams.get("search")?.trim();
+  const kelasId = searchParams.get("kelasId")?.trim();
+
+  const where: Prisma.SiswaWhereInput = { status: StatusSiswa.AKTIF };
+  if (kelasId) where.kelasId = kelasId;
+  if (search) {
+    where.OR = [
+      { nama: { contains: search, mode: "insensitive" } },
+      { nis: { contains: search, mode: "insensitive" } }
+    ];
+  }
+
+  try {
+    const deleted = await prisma.siswa.deleteMany({ where });
+    return NextResponse.json({ ok: true, deleted: deleted.count });
+  } catch (error) {
+    return jsonError(error, "Gagal menghapus data siswa");
+  }
+}
