@@ -2,11 +2,14 @@
 
 import { signOut, useSession } from "next-auth/react";
 import { LogOut, Menu } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MobileSidebar } from "@/components/layout/sidebar";
+import { toSameOriginPath } from "@/lib/same-origin-url";
 import { formatDate } from "@/lib/utils";
 
 export function Header() {
+  const router = useRouter();
   const { data } = useSession();
   const userName = data?.user?.name ?? "Pengguna";
   const shortName = userName.split(" ").filter(Boolean)[0] ?? "Pengguna";
@@ -39,7 +42,12 @@ export function Header() {
             <button
               type="button"
               className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-200 bg-white text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-neutral-800 sm:w-auto sm:px-3"
-              onClick={() => void signOut({ callbackUrl: "/login" })}
+              onClick={() => {
+                void signOut({ callbackUrl: "/login", redirect: false }).then((result) => {
+                  router.replace(toSameOriginPath(result.url, "/login"));
+                  router.refresh();
+                });
+              }}
               aria-label="Keluar"
             >
               <LogOut className="h-4 w-4" />

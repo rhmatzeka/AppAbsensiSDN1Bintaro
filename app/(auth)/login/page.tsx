@@ -10,6 +10,7 @@ import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { toSameOriginPath } from "@/lib/same-origin-url";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function LoginPage() {
       email,
       password,
       redirect: false,
-      callbackUrl: searchParams.get("callbackUrl") ?? "/dashboard"
+      callbackUrl: toSameOriginPath(searchParams.get("callbackUrl"), "/dashboard")
     });
     setLoading(false);
 
@@ -36,7 +37,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push(result?.url ?? "/dashboard");
+    router.push(toSameOriginPath(result?.url, "/dashboard"));
     router.refresh();
   }
 

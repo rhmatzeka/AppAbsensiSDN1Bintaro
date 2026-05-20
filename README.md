@@ -118,8 +118,12 @@ Tambahkan environment variable berikut di Vercel:
 DATABASE_URL="postgresql://..."
 NEXTAUTH_SECRET="..."
 AUTH_SECRET="..."
-NEXTAUTH_URL="https://domain-vercel.vercel.app"
+NEXTAUTH_URL="https://domain-anda.com"
+AUTH_URL="https://domain-anda.com"
+AUTH_TRUST_HOST="true"
 ```
+
+Gunakan domain production/custom domain pada `NEXTAUTH_URL` dan `AUTH_URL`, bukan domain `*.vercel.app`. Setelah environment variable diubah, lakukan redeploy agar konfigurasi Auth.js ikut terpakai.
 
 Gunakan PostgreSQL dari Neon, Supabase, Vercel Postgres, atau provider PostgreSQL lain. Jalankan migration ke database production sebelum digunakan.
 
