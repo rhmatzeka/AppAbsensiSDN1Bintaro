@@ -31,6 +31,8 @@ export default function SiswaPage() {
   const [form, setForm] = useState<SiswaForm>(emptyForm);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<SiswaRow | null>(null);
+  const [deletingOne, setDeletingOne] = useState(false);
   const [deleteAllOpen, setDeleteAllOpen] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [deletingAll, setDeletingAll] = useState(false);
@@ -94,10 +96,26 @@ export default function SiswaPage() {
   }
 
   async function remove(id: string) {
-    if (!window.confirm("Hapus siswa ini?")) return;
-    const r = await fetch(`/api/siswa/${id}`, { method: "DELETE" });
-    if (!r.ok) { showToast("Gagal menghapus siswa", "error"); return; }
-    await mutate(); showToast("Siswa berhasil dihapus");
+    setDeletingOne(true);
+    try {
+      const r = await fetch(`/api/siswa/${id}`, { method: "DELETE" });
+      if (!r.ok) {
+        showToast("Gagal menghapus siswa", "error");
+        return;
+      }
+      setDeleteTarget(null);
+      await mutate();
+      showToast("Siswa berhasil dihapus");
+    } catch {
+      showToast("Gagal menghapus siswa", "error");
+    } finally {
+      setDeletingOne(false);
+    }
+  }
+
+  function closeDeleteOne() {
+    if (deletingOne) return;
+    setDeleteTarget(null);
   }
 
   function openDeleteAll() {
@@ -185,12 +203,47 @@ export default function SiswaPage() {
               <Td className="text-neutral-500">{s.jenisKelamin === "LAKI_LAKI" ? "Laki-laki" : "Perempuan"}</Td>
               <Td><div className="flex items-center gap-1">
                 <Link href={`/siswa/${s.id}`} className="grid h-8 w-8 place-items-center rounded-lg text-neutral-400 hover:bg-sky-50 hover:text-sky-600" aria-label="Detail"><Eye className="h-4 w-4" /></Link>
-                {isAdmin ? <><button className="grid h-8 w-8 place-items-center rounded-lg text-neutral-400 hover:bg-amber-50 hover:text-amber-600" onClick={() => openEdit(s)} aria-label="Edit"><Edit2 className="h-4 w-4" /></button><button className="grid h-8 w-8 place-items-center rounded-lg text-neutral-400 hover:bg-rose-50 hover:text-rose-600" onClick={() => void remove(s.id)} aria-label="Hapus"><Trash2 className="h-4 w-4" /></button></> : null}
+                {isAdmin ? <><button className="grid h-8 w-8 place-items-center rounded-lg text-neutral-400 hover:bg-amber-50 hover:text-amber-600" onClick={() => openEdit(s)} aria-label="Edit"><Edit2 className="h-4 w-4" /></button><button className="grid h-8 w-8 place-items-center rounded-lg text-neutral-400 hover:bg-rose-50 hover:text-rose-600" onClick={() => setDeleteTarget(s)} aria-label="Hapus"><Trash2 className="h-4 w-4" /></button></> : null}
               </div></Td>
             </tr>))}
         </tbody></Table>)}
 
       <div className="flex items-center justify-between"><p className="text-sm text-neutral-500">Total <span className="font-semibold text-neutral-700">{data?.total ?? 0}</span> siswa</p><div className="flex gap-2"><Button type="button" variant="secondary" disabled={page <= 1} onClick={() => setPage((v) => v - 1)}>Sebelumnya</Button><Button type="button" variant="secondary" disabled={page >= (data?.pages ?? 1)} onClick={() => setPage((v) => v + 1)}>Berikutnya</Button></div></div>
+
+      <Modal open={Boolean(deleteTarget)} title="Hapus Siswa" onClose={closeDeleteOne} className="max-w-md">
+        <div className="space-y-5">
+          <div className="flex gap-4 rounded-2xl border border-rose-100 bg-rose-50 p-4">
+            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white text-rose-600 shadow-sm">
+              <Trash2 className="h-5 w-5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-rose-900">Hapus data siswa ini?</p>
+              <p className="mt-1 text-sm leading-6 text-rose-800/80">
+                {deleteTarget?.nama ?? "Siswa"} akan dihapus dari aplikasi. Riwayat absensi siswa terkait juga ikut terhapus.
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-neutral-200 bg-white p-4">
+            <dl className="grid grid-cols-[88px_minmax(0,1fr)] gap-x-3 gap-y-2 text-sm">
+              <dt className="font-semibold text-neutral-500">NIS</dt>
+              <dd className="min-w-0 truncate font-mono text-neutral-800">{deleteTarget?.nis ?? "-"}</dd>
+              <dt className="font-semibold text-neutral-500">Nama</dt>
+              <dd className="min-w-0 truncate font-semibold text-neutral-900">{deleteTarget?.nama ?? "-"}</dd>
+              <dt className="font-semibold text-neutral-500">Kelas</dt>
+              <dd className="min-w-0 truncate text-neutral-800">{deleteTarget?.kelas.nama ?? "-"}</dd>
+            </dl>
+          </div>
+
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button type="button" variant="secondary" onClick={closeDeleteOne} disabled={deletingOne}>Batal</Button>
+            <Button type="button" variant="danger" loading={deletingOne} onClick={() => deleteTarget ? void remove(deleteTarget.id) : undefined}>
+              <Trash2 className="h-4 w-4" />
+              Hapus Siswa
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       <Modal open={deleteAllOpen} title="Hapus Semua Siswa" onClose={closeDeleteAll} className="max-w-lg">
         <form
