@@ -31,12 +31,19 @@ export default function SiswaPage() {
   const [form, setForm] = useState<SiswaForm>(emptyForm);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleteAllOpen, setDeleteAllOpen] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [deletingAll, setDeletingAll] = useState(false);
   const [csvPreview, setCsvPreview] = useState<SiswaForm[]>([]);
   const { data: kelas } = useKelas();
   const { data, isLoading, mutate } = useSiswa({ page, search, kelasId });
-  const kelasOptions = kelas ?? [];
+  const kelasOptions = useMemo(() => kelas ?? [], [kelas]);
   const isAdmin = session?.user.role === "ADMIN";
+  const selectedClassName = useMemo(() => kelasOptions.find((item) => item.id === kelasId)?.nama, [kelasId, kelasOptions]);
+  const deleteScope = useMemo(() => [
+    search.trim() ? `pencarian "${search.trim()}"` : null,
+    selectedClassName ? `kelas ${selectedClassName}` : null
+  ].filter(Boolean).join(" dan ") || "semua kelas", [search, selectedClassName]);
 
   function openCreate() { setForm({ ...emptyForm, kelasId: kelasOptions[0]?.id ?? "" }); setOpen(true); }
   function openEdit(s: SiswaRow) { setForm({ id: s.id, nis: s.nis, nama: s.nama, jenisKelamin: s.jenisKelamin, tanggalLahir: s.tanggalLahir?.slice(0, 10) ?? "", alamat: s.alamat ?? "", foto: s.foto ?? "", kelasId: s.kelasId }); setOpen(true); }
@@ -93,35 +100,47 @@ export default function SiswaPage() {
     await mutate(); showToast("Siswa berhasil dihapus");
   }
 
+  function openDeleteAll() {
+    if (!(data?.total ?? 0)) return;
+    setDeleteConfirmation("");
+    setDeleteAllOpen(true);
+  }
+
+  function closeDeleteAll() {
+    if (deletingAll) return;
+    setDeleteAllOpen(false);
+    setDeleteConfirmation("");
+  }
+
   async function removeAll() {
     const total = data?.total ?? 0;
     if (!total) return;
-
-    const selectedClass = kelasOptions.find((item) => item.id === kelasId)?.nama;
-    const scope = [
-      search.trim() ? `pencarian "${search.trim()}"` : null,
-      selectedClass ? `kelas ${selectedClass}` : null
-    ].filter(Boolean).join(" dan ") || "semua kelas";
-    const confirmation = window.prompt(`Aksi ini akan menghapus ${total} siswa aktif untuk ${scope}. Riwayat absensi siswa terkait juga ikut terhapus. Ketik HAPUS untuk lanjut.`);
-    if (confirmation !== "HAPUS") return;
+    if (deleteConfirmation !== "HAPUS") return;
 
     const params = new URLSearchParams();
     if (search.trim()) params.set("search", search.trim());
     if (kelasId) params.set("kelasId", kelasId);
 
     setDeletingAll(true);
-    const r = await fetch(`/api/siswa${params.toString() ? `?${params.toString()}` : ""}`, { method: "DELETE" });
-    setDeletingAll(false);
-    if (!r.ok) {
-      const err = (await r.json().catch(() => ({ message: "Gagal menghapus data siswa" }))) as { message?: string };
-      showToast(err.message ?? "Gagal menghapus data siswa", "error");
-      return;
-    }
+    try {
+      const r = await fetch(`/api/siswa${params.toString() ? `?${params.toString()}` : ""}`, { method: "DELETE" });
+      if (!r.ok) {
+        const err = (await r.json().catch(() => ({ message: "Gagal menghapus data siswa" }))) as { message?: string };
+        showToast(err.message ?? "Gagal menghapus data siswa", "error");
+        return;
+      }
 
-    const result = (await r.json()) as { deleted?: number };
-    setPage(1);
-    await mutate();
-    showToast(`${result.deleted ?? total} siswa berhasil dihapus`);
+      const result = (await r.json()) as { deleted?: number };
+      setPage(1);
+      await mutate();
+      setDeleteAllOpen(false);
+      setDeleteConfirmation("");
+      showToast(`${result.deleted ?? total} siswa berhasil dihapus`);
+    } catch {
+      showToast("Gagal menghapus data siswa", "error");
+    } finally {
+      setDeletingAll(false);
+    }
   }
 
   function parseCsv(text: string) {
@@ -150,7 +169,7 @@ export default function SiswaPage() {
         <label className="relative block"><Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" /><Input className="pl-10" placeholder="Cari nama atau NIS" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} /></label>
         <Select value={kelasId} onChange={(e) => { setKelasId(e.target.value); setPage(1); }}><option value="">Semua kelas</option>{kelasOptions.map((i) => <option key={i.id} value={i.id}>{i.nama}</option>)}</Select>
         {isAdmin ? <label className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-600 hover:bg-neutral-50 hover:border-neutral-300"><Upload className="h-4 w-4" />Import CSV<input type="file" accept=".csv,text/csv" className="sr-only" onChange={async (e) => { const f = e.target.files?.[0]; if (f) parseCsv(await f.text()); e.target.value = ""; }} /></label> : null}
-        {isAdmin ? <Button type="button" variant="danger" loading={deletingAll} disabled={!data?.total || isLoading} onClick={() => void removeAll()}><AlertTriangle className="h-4 w-4" />Hapus Semua</Button> : null}
+        {isAdmin ? <Button type="button" variant="danger" disabled={!data?.total || isLoading} onClick={openDeleteAll}><AlertTriangle className="h-4 w-4" />Hapus Semua</Button> : null}
       </div>
 
       {csvPreview.length ? <div className="rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-subtle"><div className="mb-3 flex items-center justify-between gap-3"><p className="text-sm font-bold text-neutral-800">Preview CSV: {csvPreview.length} siswa</p><Button type="button" onClick={importCsv}>Simpan Import</Button></div><p className="text-xs text-neutral-500">Format: nis,nama,jenisKelamin,kelas,alamat</p></div> : null}
@@ -172,6 +191,47 @@ export default function SiswaPage() {
         </tbody></Table>)}
 
       <div className="flex items-center justify-between"><p className="text-sm text-neutral-500">Total <span className="font-semibold text-neutral-700">{data?.total ?? 0}</span> siswa</p><div className="flex gap-2"><Button type="button" variant="secondary" disabled={page <= 1} onClick={() => setPage((v) => v - 1)}>Sebelumnya</Button><Button type="button" variant="secondary" disabled={page >= (data?.pages ?? 1)} onClick={() => setPage((v) => v + 1)}>Berikutnya</Button></div></div>
+
+      <Modal open={deleteAllOpen} title="Hapus Semua Siswa" onClose={closeDeleteAll} className="max-w-lg">
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            void removeAll();
+          }}
+          className="space-y-5"
+        >
+          <div className="flex gap-4 rounded-2xl border border-rose-100 bg-rose-50 p-4">
+            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white text-rose-600 shadow-sm">
+              <AlertTriangle className="h-5 w-5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-rose-900">Data yang dihapus tidak bisa dikembalikan dari aplikasi.</p>
+              <p className="mt-1 text-sm leading-6 text-rose-800/80">
+                Aksi ini akan menghapus {data?.total ?? 0} siswa aktif untuk {deleteScope}. Riwayat absensi siswa terkait juga ikut terhapus.
+              </p>
+            </div>
+          </div>
+
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-neutral-700">Ketik HAPUS untuk melanjutkan</span>
+            <Input
+              autoFocus
+              value={deleteConfirmation}
+              onChange={(event) => setDeleteConfirmation(event.target.value)}
+              placeholder="HAPUS"
+              disabled={deletingAll}
+            />
+          </label>
+
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button type="button" variant="secondary" onClick={closeDeleteAll} disabled={deletingAll}>Batal</Button>
+            <Button type="submit" variant="danger" loading={deletingAll} disabled={deleteConfirmation !== "HAPUS"}>
+              <Trash2 className="h-4 w-4" />
+              Hapus Semua
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       <Modal open={open} title={form.id ? "Edit Siswa" : "Tambah Siswa"} onClose={() => setOpen(false)} className="max-w-3xl">
         <form onSubmit={submit} className="grid gap-3 sm:grid-cols-2 sm:gap-4">
