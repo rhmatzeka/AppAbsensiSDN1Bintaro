@@ -125,6 +125,8 @@ AUTH_TRUST_HOST="true"
 
 Gunakan domain production/custom domain pada `NEXTAUTH_URL` dan `AUTH_URL`, bukan domain `*.vercel.app`. Setelah environment variable diubah, lakukan redeploy agar konfigurasi Auth.js ikut terpakai.
 
+Jika memakai tombol import env di dashboard Vercel, gunakan isi file `vercel-domain.env` dari project ini untuk memperbarui konfigurasi domain Auth.js.
+
 Gunakan PostgreSQL dari Neon, Supabase, Vercel Postgres, atau provider PostgreSQL lain. Jalankan migration ke database production sebelum digunakan.
 
 ## Cloudflare
