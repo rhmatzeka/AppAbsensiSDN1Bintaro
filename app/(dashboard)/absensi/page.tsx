@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { BookOpenText, Save, CheckCircle2, UsersRound } from "lucide-react";
+import { BookOpenText, Save, CheckCircle2, LockKeyhole, UsersRound } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { PageShell } from "@/components/layout/page-shell";
 import { SummaryCard } from "@/components/absensi/summary-card";
@@ -63,7 +63,11 @@ export default function AbsensiPage() {
   const [saving, setSaving] = useState(false);
   const { data: kelas } = useKelas();
   const isGuru = session?.user.role === "GURU";
-  const visibleKelas = useMemo(() => kelas ?? [], [kelas]);
+  const assignedKelasId = session?.user.kelasId ?? "";
+  const visibleKelas = useMemo(() => {
+    if (!isGuru) return kelas ?? [];
+    return (kelas ?? []).filter((item) => item.id === assignedKelasId);
+  }, [assignedKelasId, isGuru, kelas]);
   const selectedKelas = useMemo(() => visibleKelas.find((item) => item.id === kelasId), [kelasId, visibleKelas]);
   const { data: siswaData, isLoading: loadingSiswa, isValidating: validatingSiswa, mutate: refreshSiswa } = useSiswa({ kelasId, limit: 100 }, { keepPreviousData: false });
   const { data: existing, mutate: refreshAbsensi } = useAbsensi({ kelasId, tanggal }, { keepPreviousData: false });
@@ -76,11 +80,12 @@ export default function AbsensiPage() {
   });
 
   useEffect(() => {
-    if (!session?.user || kelasId) return;
+    if (!session?.user) return;
     if (session.user.role === "GURU" && session.user.kelasId) {
-      setKelasId(session.user.kelasId);
+      if (kelasId !== session.user.kelasId) setKelasId(session.user.kelasId);
       return;
     }
+    if (kelasId) return;
     if (visibleKelas[0]) setKelasId(visibleKelas[0].id);
   }, [kelasId, session?.user, visibleKelas]);
 
@@ -131,6 +136,10 @@ export default function AbsensiPage() {
 
   async function save() {
     if (!kelasId || rows.length === 0) return;
+    if (isGuru && kelasId !== assignedKelasId) {
+      showToast("Guru hanya boleh mengisi absensi kelas yang ditugaskan", "error");
+      return;
+    }
     const hasKegiatan = canFillKegiatan && Object.entries(kegiatanForm)
       .filter(([key]) => key !== "id")
       .some(([, value]) => value.trim());
@@ -187,7 +196,7 @@ export default function AbsensiPage() {
   return (
     <PageShell
       title="Input Absensi"
-      description="Pilih kelas dan tanggal, lalu simpan absensi semua siswa sekaligus."
+      description={isGuru ? "Guru hanya dapat mengisi absensi untuk kelas yang ditugaskan." : "Pilih kelas dan tanggal, lalu simpan absensi semua siswa sekaligus."}
       action={
         <Button type="button" onClick={save} loading={saving} disabled={!rows.length} className="h-11">
           <Save className="h-4 w-4" />
@@ -203,14 +212,14 @@ export default function AbsensiPage() {
               <h2 className="text-base font-bold text-neutral-900">Pengaturan Absensi</h2>
               {isGuru ? (
                 <Badge className="gap-1 border border-orange-200 bg-orange-50 text-orange-700">
-                  <UsersRound className="h-3.5 w-3.5" />
-                  Mode guru
+                  <LockKeyhole className="h-3.5 w-3.5" />
+                  Kelas terkunci
                 </Badge>
               ) : null}
             </div>
             <p className="mt-1 text-sm text-neutral-500">
               {selectedKelas
-                ? `${selectedKelas.nama} - ${selectedKelas.jumlahSiswa} siswa aktif${isGuru ? ", guru dapat memilih kelas lain." : ""}`
+                ? `${selectedKelas.nama} - ${selectedKelas.jumlahSiswa} siswa aktif${isGuru ? ", akses guru dikunci untuk kelas ini." : ""}`
                 : "Pilih kelas untuk memuat daftar siswa."}
             </p>
           </div>
@@ -223,7 +232,7 @@ export default function AbsensiPage() {
         <div className="grid gap-4 md:grid-cols-[minmax(0,1.45fr)_minmax(220px,0.7fr)_minmax(220px,0.75fr)]">
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-neutral-700">Kelas</span>
-            <Select value={kelasId} onChange={(event) => setKelasId(event.target.value)} disabled={visibleKelas.length <= 1}>
+            <Select value={kelasId} onChange={(event) => setKelasId(event.target.value)} disabled={isGuru || visibleKelas.length <= 1}>
               {visibleKelas.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.nama}

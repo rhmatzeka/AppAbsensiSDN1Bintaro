@@ -24,6 +24,9 @@ export async function GET(request: NextRequest) {
   const tanggal = searchParams.get("tanggal")?.trim();
 
   const where: Prisma.AbsensiWhereInput = {};
+  if (kelasId && user.role === Role.GURU && kelasId !== user.kelasId) {
+    return NextResponse.json({ message: "Guru hanya boleh mengakses kelas yang ditugaskan" }, { status: 403 });
+  }
   if (kelasId) where.kelasId = kelasId;
   if (!kelasId && !siswaId && user.role === Role.GURU) where.kelasId = user.kelasId ?? "__none__";
   if (siswaId) where.siswaId = siswaId;
@@ -56,6 +59,18 @@ export async function POST(request: NextRequest) {
     const body = await readJson<AbsensiPayload>(request);
     if (!body.tanggal || !body.items?.length) {
       return NextResponse.json({ message: "Tanggal dan data absensi wajib diisi" }, { status: 400 });
+    }
+    if (user.role === Role.GURU) {
+      const assignedKelasId = user.kelasId;
+      if (!assignedKelasId || body.items.some((item) => item.kelasId !== assignedKelasId)) {
+        return NextResponse.json({ message: "Guru hanya boleh mengisi absensi kelas yang ditugaskan" }, { status: 403 });
+      }
+
+      const siswaIds = [...new Set(body.items.map((item) => item.siswaId))];
+      const validSiswa = await prisma.siswa.count({ where: { id: { in: siswaIds }, kelasId: assignedKelasId } });
+      if (validSiswa !== siswaIds.length) {
+        return NextResponse.json({ message: "Data siswa tidak sesuai dengan kelas guru" }, { status: 403 });
+      }
     }
 
     const tanggal = new Date(body.tanggal);

@@ -51,6 +51,9 @@ export async function PUT(request: NextRequest, { params }: Params) {
     if (!tanggal || !kelasId || !materi || !kegiatan) {
       return NextResponse.json({ message: "Tanggal, kelas, materi, dan kegiatan wajib diisi" }, { status: 400 });
     }
+    if (user.role === Role.GURU && (!user.kelasId || kelasId !== user.kelasId)) {
+      return NextResponse.json({ message: "Guru hanya boleh mencatat kegiatan untuk kelas yang ditugaskan" }, { status: 403 });
+    }
     const targetUserId = user.role === Role.ADMIN ? body.guruId?.trim() || user.id : user.id;
     if (!targetUserId) {
       return NextResponse.json({ message: "Guru wajib dipilih" }, { status: 400 });
