@@ -31,7 +31,7 @@ const includeKegiatan = {
 } as const;
 
 export async function GET(request: NextRequest) {
-  const { user, response } = await requireUser();
+  const { response } = await requireUser();
   if (response) return response;
 
   const { searchParams } = new URL(request.url);
@@ -44,8 +44,7 @@ export async function GET(request: NextRequest) {
   const tanggalAkhir = searchParams.get("tanggalAkhir")?.trim();
 
   const where: Prisma.KegiatanGuruWhereInput = {};
-  if (user.role === Role.GURU) where.userId = user.id;
-  if (user.role === Role.ADMIN && guruId) where.userId = guruId;
+  if (guruId) where.userId = guruId;
   if (kelasId) where.kelasId = kelasId;
   if (tanggal) {
     const value = dateFromInput(tanggal);

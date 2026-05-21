@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { Role, StatusAbsensi, StatusSiswa } from "@prisma/client";
+import { StatusAbsensi, StatusSiswa } from "@prisma/client";
 import { endOfDay, endOfMonth, startOfDay, startOfMonth } from "date-fns";
 import { jsonError, requireUser } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
@@ -11,7 +11,7 @@ function dateFromInput(value: string) {
 }
 
 export async function GET(request: NextRequest) {
-  const { user, response } = await requireUser();
+  const { response } = await requireUser();
   if (response) return response;
 
   const { searchParams } = new URL(request.url);
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const effectiveKelasId = user.role === Role.GURU ? user.kelasId ?? "__none__" : kelasId || undefined;
+    const effectiveKelasId = kelasId || undefined;
     const siswa = await prisma.siswa.findMany({
       where: { status: StatusSiswa.AKTIF, ...(effectiveKelasId ? { kelasId: effectiveKelasId } : {}) },
       include: {

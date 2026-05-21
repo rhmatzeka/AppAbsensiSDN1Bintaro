@@ -36,7 +36,6 @@ export async function GET() {
         take: 12
       }),
       prisma.kelas.findMany({
-        where: user.role === Role.GURU ? { id: user.kelasId ?? "__none__" } : {},
         include: {
           absensi: {
             where: { tanggal: { gte: startOfDay(subDays(today, 7)), lte: endOfDay(today) } },

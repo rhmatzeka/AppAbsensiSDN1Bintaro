@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 type AttendanceChartProps = {
   data: {
@@ -13,7 +13,7 @@ type AttendanceChartProps = {
 export function AttendanceChart({ data }: AttendanceChartProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <BarChart data={data} barGap={4}>
+      <BarChart data={data} barGap={4} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#F0F1F3" vertical={false} />
         <XAxis dataKey="kelas" tick={{ fontSize: 12, fill: "#6B7280" }} axisLine={false} tickLine={false} />
         <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#6B7280" }} axisLine={false} tickLine={false} />
@@ -27,6 +27,7 @@ export function AttendanceChart({ data }: AttendanceChartProps) {
             fontSize: "13px"
           }}
         />
+        <Legend iconType="circle" wrapperStyle={{ color: "#4B5563", fontSize: 12, paddingTop: 12 }} />
         <Bar dataKey="hadir" name="Hadir" fill="#10B981" radius={[8, 8, 0, 0]} />
         <Bar dataKey="tidakHadir" name="Tidak Hadir" fill="#F43F5E" radius={[8, 8, 0, 0]} />
       </BarChart>

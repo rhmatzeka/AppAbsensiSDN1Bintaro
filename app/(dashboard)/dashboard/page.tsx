@@ -92,9 +92,14 @@ export default function DashboardPage() {
       {/* Chart & Recent */}
       <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
         <section className="min-w-0 rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-subtle">
-          <div className="mb-5">
-            <h2 className="text-base font-bold text-neutral-900">Kehadiran per Kelas</h2>
-            <p className="mt-0.5 text-sm text-neutral-500">Akumulasi 7 hari terakhir.</p>
+          <div className="mb-5 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-base font-bold text-neutral-900">Kehadiran per Kelas</h2>
+              <p className="mt-0.5 text-sm text-neutral-500">Akumulasi 7 hari terakhir untuk semua kelas.</p>
+            </div>
+            <span className="inline-flex w-fit rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
+              Semua kelas
+            </span>
           </div>
           <div className="h-72 min-w-0 sm:h-80">
             <AttendanceChart data={data?.chart ?? []} />

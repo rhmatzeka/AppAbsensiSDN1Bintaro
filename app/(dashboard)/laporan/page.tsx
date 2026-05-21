@@ -1,7 +1,7 @@
 "use client";
 
-import { CalendarDays, Download, Printer } from "lucide-react";
-import { useMemo, useState } from "react";
+import { BookOpenText, CalendarDays, CheckCircle2, Download, Printer, ShieldAlert, Thermometer, UserRoundCheck, UsersRound } from "lucide-react";
+import { useMemo, useState, type ReactNode } from "react";
 import { PageShell } from "@/components/layout/page-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,6 +80,10 @@ export default function LaporanPage() {
       { hadir: 0, sakit: 0, izin: 0, alpha: 0 }
     );
   }, [data]);
+  const totalAbsensi = attendanceTotals.hadir + attendanceTotals.sakit + attendanceTotals.izin + attendanceTotals.alpha;
+  const persentaseHadir = totalAbsensi === 0 ? 0 : Math.round((attendanceTotals.hadir / totalAbsensi) * 100);
+  const jumlahSiswa = data?.length ?? 0;
+  const jumlahKegiatan = kegiatanData?.items.length ?? 0;
 
   function exportCsv() {
     const header = ["NIS", "Nama", "Kelas", "Hadir", "Sakit", "Izin", "Alpha", "Persentase"];
@@ -148,21 +152,36 @@ export default function LaporanPage() {
 
       {/* Filters */}
       <div className="no-print rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-subtle">
-        <div className="mb-4 inline-flex rounded-xl border border-neutral-200 bg-neutral-50 p-1">
-          {(["bulanan", "mingguan"] as const).map((item) => (
-            <button
-              key={item}
-              type="button"
-              className={cn(
-                "inline-flex min-h-9 items-center gap-2 rounded-lg px-3 text-sm font-bold capitalize transition-colors",
-                periode === item ? "bg-white text-orange-700 shadow-sm" : "text-neutral-500 hover:text-neutral-900"
-              )}
-              onClick={() => setPeriode(item)}
-            >
-              {item === "mingguan" ? <CalendarDays className="h-4 w-4" /> : null}
-              {item}
-            </button>
-          ))}
+        <div className="mb-5 flex flex-col gap-4 border-b border-neutral-100 pb-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-base font-bold text-neutral-900">Filter Laporan</h2>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-bold text-orange-700">
+                <UsersRound className="h-3.5 w-3.5" />
+                {selectedKelasName}
+              </span>
+            </div>
+            <p className="mt-1 text-sm text-neutral-500">
+              Data tabel, materi, export, dan print mengikuti kelas serta periode yang dipilih.
+            </p>
+          </div>
+
+          <div className="inline-flex w-fit rounded-xl border border-neutral-200 bg-neutral-50 p-1">
+            {(["bulanan", "mingguan"] as const).map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={cn(
+                  "inline-flex min-h-9 items-center gap-2 rounded-lg px-3 text-sm font-bold capitalize transition-colors",
+                  periode === item ? "bg-white text-orange-700 shadow-sm" : "text-neutral-500 hover:text-neutral-900"
+                )}
+                onClick={() => setPeriode(item)}
+              >
+                {item === "mingguan" ? <CalendarDays className="h-4 w-4" /> : null}
+                {item}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
@@ -201,10 +220,24 @@ export default function LaporanPage() {
         </div>
       </div>
 
+      <div className="no-print grid grid-cols-2 gap-3 lg:grid-cols-5">
+        <ReportSummaryCard label="Siswa" value={jumlahSiswa} icon={<UsersRound className="h-4 w-4" />} color="slate" />
+        <ReportSummaryCard label="Hadir" value={attendanceTotals.hadir} icon={<CheckCircle2 className="h-4 w-4" />} color="green" />
+        <ReportSummaryCard label="Sakit/Izin" value={attendanceTotals.sakit + attendanceTotals.izin} icon={<Thermometer className="h-4 w-4" />} color="blue" />
+        <ReportSummaryCard label="Alpha" value={attendanceTotals.alpha} icon={<ShieldAlert className="h-4 w-4" />} color="red" />
+        <ReportSummaryCard label="% Hadir" value={`${persentaseHadir}%`} icon={<UserRoundCheck className="h-4 w-4" />} color="orange" />
+      </div>
+
       <section className="print-section rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-subtle">
-        <div className="mb-4">
-          <h2 className="text-base font-bold text-neutral-900">Rekap Kegiatan Guru</h2>
-          <p className="mt-0.5 text-sm text-neutral-500">Tema, materi, dan kegiatan yang dicatat pada periode ini.</p>
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h2 className="text-base font-bold text-neutral-900">Rekap Kegiatan Guru</h2>
+            <p className="mt-0.5 text-sm text-neutral-500">Tema, materi, dan kegiatan yang dicatat pada periode ini.</p>
+          </div>
+          <span className="inline-flex w-fit items-center gap-2 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm font-semibold text-neutral-600">
+            <BookOpenText className="h-4 w-4 text-orange-500" />
+            {jumlahKegiatan} catatan
+          </span>
         </div>
         {loadingKegiatan ? (
           <Skeleton className="h-32" />
@@ -276,5 +309,39 @@ export default function LaporanPage() {
         )}
       </section>
     </PageShell>
+  );
+}
+
+function ReportSummaryCard({
+  label,
+  value,
+  icon,
+  color
+}: {
+  label: string;
+  value: number | string;
+  icon: ReactNode;
+  color: "slate" | "green" | "blue" | "red" | "orange";
+}) {
+  const colors = {
+    slate: "bg-slate-50 text-slate-600 border-slate-200/70",
+    green: "bg-emerald-50 text-emerald-600 border-emerald-200/70",
+    blue: "bg-sky-50 text-sky-600 border-sky-200/70",
+    red: "bg-rose-50 text-rose-600 border-rose-200/70",
+    orange: "bg-orange-50 text-orange-600 border-orange-200/70"
+  };
+
+  return (
+    <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-subtle">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-[11px] font-bold uppercase tracking-wider text-neutral-400">{label}</p>
+          <p className="mt-2 text-2xl font-black leading-none text-neutral-900">{value}</p>
+        </div>
+        <div className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-xl border", colors[color])}>
+          {icon}
+        </div>
+      </div>
+    </div>
   );
 }
