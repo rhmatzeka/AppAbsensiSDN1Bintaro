@@ -193,7 +193,7 @@ export default function SiswaPage() {
       {csvPreview.length ? <div className="rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-subtle"><div className="mb-3 flex items-center justify-between gap-3"><p className="text-sm font-bold text-neutral-800">Preview CSV: {csvPreview.length} siswa</p><Button type="button" onClick={importCsv}>Simpan Import</Button></div><p className="text-xs text-neutral-500">Format: nis,nama,jenisKelamin,kelas,alamat</p></div> : null}
 
       {isLoading ? <Skeleton className="h-80" /> : !data?.items.length ? <EmptyState title="Data siswa kosong" description="Tambahkan siswa atau ubah filter pencarian." /> : (
-        <Table><thead><tr><Th>No</Th><Th>NIS</Th><Th>Nama</Th><Th>Kelas</Th><Th>Jenis Kelamin</Th><Th>Aksi</Th></tr></thead><tbody>
+        <Table><thead><tr><Th>No</Th><Th>NIS</Th><Th>Nama</Th><Th>Kelas</Th><Th>Jenis Kelamin</Th><Th className="w-28 text-center">Aksi</Th></tr></thead><tbody>
           {data.items.map((s, i) => (
             <tr key={s.id} className="transition-colors hover:bg-orange-50/30">
               <Td className="text-neutral-400 text-xs w-12">{startItem + i}</Td>
@@ -201,7 +201,7 @@ export default function SiswaPage() {
               <Td className="font-semibold text-neutral-800">{s.nama}</Td>
               <Td><span className="inline-flex rounded-lg bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600">{s.kelas.nama}</span></Td>
               <Td className="text-neutral-500">{s.jenisKelamin === "LAKI_LAKI" ? "Laki-laki" : "Perempuan"}</Td>
-              <Td><div className="flex items-center gap-1">
+              <Td className="w-28"><div className="flex items-center justify-center gap-1">
                 <Link href={`/siswa/${s.id}`} className="grid h-8 w-8 place-items-center rounded-lg text-neutral-400 hover:bg-sky-50 hover:text-sky-600" aria-label="Detail"><Eye className="h-4 w-4" /></Link>
                 {isAdmin ? <><button className="grid h-8 w-8 place-items-center rounded-lg text-neutral-400 hover:bg-amber-50 hover:text-amber-600" onClick={() => openEdit(s)} aria-label="Edit"><Edit2 className="h-4 w-4" /></button><button className="grid h-8 w-8 place-items-center rounded-lg text-neutral-400 hover:bg-rose-50 hover:text-rose-600" onClick={() => setDeleteTarget(s)} aria-label="Hapus"><Trash2 className="h-4 w-4" /></button></> : null}
               </div></Td>

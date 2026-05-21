@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { JenisKelamin, Role, StatusSiswa } from "@prisma/client";
+import { JenisKelamin, StatusSiswa } from "@prisma/client";
 import { jsonError, readJson, requireAdmin, requireUser } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 
@@ -16,7 +16,7 @@ type SiswaPayload = {
 };
 
 export async function GET(_request: NextRequest, { params }: Params) {
-  const { user, response } = await requireUser();
+  const { response } = await requireUser();
   if (response) return response;
   const { id } = await params;
 
@@ -29,9 +29,6 @@ export async function GET(_request: NextRequest, { params }: Params) {
       }
     });
     if (!siswa) return NextResponse.json({ message: "Siswa tidak ditemukan" }, { status: 404 });
-    if (user.role === Role.GURU && siswa.kelasId !== user.kelasId) {
-      return NextResponse.json({ message: "Akses siswa ditolak" }, { status: 403 });
-    }
     return NextResponse.json(siswa);
   } catch (error) {
     return jsonError(error);

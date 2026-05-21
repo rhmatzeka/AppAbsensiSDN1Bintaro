@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
   const where: Prisma.AbsensiWhereInput = {};
   if (kelasId) where.kelasId = kelasId;
-  if (!kelasId && user.role === Role.GURU) where.kelasId = user.kelasId ?? "__none__";
+  if (!kelasId && !siswaId && user.role === Role.GURU) where.kelasId = user.kelasId ?? "__none__";
   if (siswaId) where.siswaId = siswaId;
   if (tanggal) {
     const value = new Date(tanggal);
