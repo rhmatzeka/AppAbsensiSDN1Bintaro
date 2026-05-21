@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { SWRConfiguration } from "swr";
 import { useApi } from "@/hooks/useApi";
 import type { AbsensiRow } from "@/types";
 
@@ -8,7 +9,7 @@ type AbsensiQuery = {
   tanggal?: string;
 };
 
-export function useAbsensi(query: AbsensiQuery = {}) {
+export function useAbsensi(query: AbsensiQuery = {}, options?: SWRConfiguration<AbsensiRow[]>) {
   const url = useMemo(() => {
     const params = new URLSearchParams();
     if (query.kelasId) params.set("kelasId", query.kelasId);
@@ -17,5 +18,5 @@ export function useAbsensi(query: AbsensiQuery = {}) {
     return `/api/absensi?${params.toString()}`;
   }, [query.kelasId, query.siswaId, query.tanggal]);
 
-  return useApi<AbsensiRow[]>(url);
+  return useApi<AbsensiRow[]>(url, options);
 }

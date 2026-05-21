@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { SWRConfiguration } from "swr";
 import { useApi } from "@/hooks/useApi";
 import type { PaginatedResponse, SiswaRow } from "@/types";
 
@@ -9,7 +10,7 @@ type SiswaQuery = {
   kelasId?: string;
 };
 
-export function useSiswa(query: SiswaQuery = {}) {
+export function useSiswa(query: SiswaQuery = {}, options?: SWRConfiguration<PaginatedResponse<SiswaRow>>) {
   const url = useMemo(() => {
     const params = new URLSearchParams();
     params.set("page", String(query.page ?? 1));
@@ -19,5 +20,5 @@ export function useSiswa(query: SiswaQuery = {}) {
     return `/api/siswa?${params.toString()}`;
   }, [query.kelasId, query.limit, query.page, query.search]);
 
-  return useApi<PaginatedResponse<SiswaRow>>(url);
+  return useApi<PaginatedResponse<SiswaRow>>(url, options);
 }

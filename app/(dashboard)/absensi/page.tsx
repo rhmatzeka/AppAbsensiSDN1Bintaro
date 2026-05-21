@@ -1,10 +1,11 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { BookOpenText, Save, CheckCircle2 } from "lucide-react";
+import { BookOpenText, Save, CheckCircle2, LockKeyhole, UsersRound } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { PageShell } from "@/components/layout/page-shell";
 import { SummaryCard } from "@/components/absensi/summary-card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -61,8 +62,15 @@ export default function AbsensiPage() {
   const [kegiatanForm, setKegiatanForm] = useState<KegiatanForm>(emptyKegiatan);
   const [saving, setSaving] = useState(false);
   const { data: kelas } = useKelas();
-  const { data: siswaData, isLoading: loadingSiswa, mutate: refreshSiswa } = useSiswa({ kelasId, limit: 100 });
-  const { data: existing, mutate: refreshAbsensi } = useAbsensi({ kelasId, tanggal });
+  const isGuru = session?.user.role === "GURU";
+  const visibleKelas = useMemo(() => {
+    if (!kelas) return [];
+    if (!isGuru) return kelas;
+    return kelas.filter((item) => item.id === session?.user.kelasId);
+  }, [isGuru, kelas, session?.user.kelasId]);
+  const selectedKelas = useMemo(() => visibleKelas.find((item) => item.id === kelasId), [kelasId, visibleKelas]);
+  const { data: siswaData, isLoading: loadingSiswa, isValidating: validatingSiswa, mutate: refreshSiswa } = useSiswa({ kelasId, limit: 100 }, { keepPreviousData: false });
+  const { data: existing, mutate: refreshAbsensi } = useAbsensi({ kelasId, tanggal }, { keepPreviousData: false });
   const { data: existingKegiatan, mutate: refreshKegiatan } = useKegiatan({
     enabled: Boolean(canFillKegiatan && kelasId && tanggal),
     guruId: session?.user.id,
@@ -77,8 +85,13 @@ export default function AbsensiPage() {
       setKelasId(session.user.kelasId);
       return;
     }
-    if (kelas?.[0]) setKelasId(kelas[0].id);
-  }, [kelas, kelasId, session?.user]);
+    if (visibleKelas[0]) setKelasId(visibleKelas[0].id);
+  }, [kelasId, session?.user, visibleKelas]);
+
+  useEffect(() => {
+    if (!isGuru || !session?.user.kelasId || kelasId === session.user.kelasId) return;
+    setKelasId(session.user.kelasId);
+  }, [isGuru, kelasId, session?.user.kelasId]);
 
   useEffect(() => {
     const siswa = siswaData?.items ?? [];
@@ -193,11 +206,32 @@ export default function AbsensiPage() {
     >
       {/* Filters */}
       <div className="rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-subtle">
-        <div className="grid gap-4 md:grid-cols-4">
-          <label className="block md:col-span-2">
+        <div className="mb-5 flex flex-col gap-3 border-b border-neutral-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-base font-bold text-neutral-900">Pengaturan Absensi</h2>
+              {isGuru ? (
+                <Badge className="gap-1 border border-orange-200 bg-orange-50 text-orange-700">
+                  <LockKeyhole className="h-3.5 w-3.5" />
+                  Kelas tugas
+                </Badge>
+              ) : null}
+            </div>
+            <p className="mt-1 text-sm text-neutral-500">
+              {selectedKelas ? `${selectedKelas.nama} - ${selectedKelas.jumlahSiswa} siswa aktif` : "Pilih kelas untuk memuat daftar siswa."}
+            </p>
+          </div>
+          <div className="inline-flex w-fit items-center gap-2 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm font-semibold text-neutral-600">
+            <UsersRound className="h-4 w-4 text-orange-500" />
+            {rows.length} siswa dimuat
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-[minmax(0,1.45fr)_minmax(220px,0.7fr)_minmax(220px,0.75fr)]">
+          <label className="block">
             <span className="mb-2 block text-sm font-semibold text-neutral-700">Kelas</span>
-            <Select value={kelasId} onChange={(event) => setKelasId(event.target.value)}>
-              {(kelas ?? []).map((item) => (
+            <Select value={kelasId} onChange={(event) => setKelasId(event.target.value)} disabled={isGuru || visibleKelas.length <= 1}>
+              {visibleKelas.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.nama}
                 </option>
@@ -273,7 +307,7 @@ export default function AbsensiPage() {
       </div>
 
       {/* Table */}
-      {loadingSiswa ? (
+      {loadingSiswa || validatingSiswa ? (
         <Skeleton className="h-72" />
       ) : rows.length === 0 ? (
         <EmptyState title="Belum ada siswa" description="Pilih kelas yang memiliki data siswa." />
