@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { BookOpenText, Save, CheckCircle2, LockKeyhole, UsersRound } from "lucide-react";
+import { BookOpenText, Save, CheckCircle2, UsersRound } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { PageShell } from "@/components/layout/page-shell";
 import { SummaryCard } from "@/components/absensi/summary-card";
@@ -63,11 +63,7 @@ export default function AbsensiPage() {
   const [saving, setSaving] = useState(false);
   const { data: kelas } = useKelas();
   const isGuru = session?.user.role === "GURU";
-  const visibleKelas = useMemo(() => {
-    if (!kelas) return [];
-    if (!isGuru) return kelas;
-    return kelas.filter((item) => item.id === session?.user.kelasId);
-  }, [isGuru, kelas, session?.user.kelasId]);
+  const visibleKelas = useMemo(() => kelas ?? [], [kelas]);
   const selectedKelas = useMemo(() => visibleKelas.find((item) => item.id === kelasId), [kelasId, visibleKelas]);
   const { data: siswaData, isLoading: loadingSiswa, isValidating: validatingSiswa, mutate: refreshSiswa } = useSiswa({ kelasId, limit: 100 }, { keepPreviousData: false });
   const { data: existing, mutate: refreshAbsensi } = useAbsensi({ kelasId, tanggal }, { keepPreviousData: false });
@@ -87,11 +83,6 @@ export default function AbsensiPage() {
     }
     if (visibleKelas[0]) setKelasId(visibleKelas[0].id);
   }, [kelasId, session?.user, visibleKelas]);
-
-  useEffect(() => {
-    if (!isGuru || !session?.user.kelasId || kelasId === session.user.kelasId) return;
-    setKelasId(session.user.kelasId);
-  }, [isGuru, kelasId, session?.user.kelasId]);
 
   useEffect(() => {
     const siswa = siswaData?.items ?? [];
@@ -212,13 +203,15 @@ export default function AbsensiPage() {
               <h2 className="text-base font-bold text-neutral-900">Pengaturan Absensi</h2>
               {isGuru ? (
                 <Badge className="gap-1 border border-orange-200 bg-orange-50 text-orange-700">
-                  <LockKeyhole className="h-3.5 w-3.5" />
-                  Kelas tugas
+                  <UsersRound className="h-3.5 w-3.5" />
+                  Mode guru
                 </Badge>
               ) : null}
             </div>
             <p className="mt-1 text-sm text-neutral-500">
-              {selectedKelas ? `${selectedKelas.nama} - ${selectedKelas.jumlahSiswa} siswa aktif` : "Pilih kelas untuk memuat daftar siswa."}
+              {selectedKelas
+                ? `${selectedKelas.nama} - ${selectedKelas.jumlahSiswa} siswa aktif${isGuru ? ", guru dapat memilih kelas lain." : ""}`
+                : "Pilih kelas untuk memuat daftar siswa."}
             </p>
           </div>
           <div className="inline-flex w-fit items-center gap-2 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm font-semibold text-neutral-600">
@@ -230,7 +223,7 @@ export default function AbsensiPage() {
         <div className="grid gap-4 md:grid-cols-[minmax(0,1.45fr)_minmax(220px,0.7fr)_minmax(220px,0.75fr)]">
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-neutral-700">Kelas</span>
-            <Select value={kelasId} onChange={(event) => setKelasId(event.target.value)} disabled={isGuru || visibleKelas.length <= 1}>
+            <Select value={kelasId} onChange={(event) => setKelasId(event.target.value)} disabled={visibleKelas.length <= 1}>
               {visibleKelas.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.nama}

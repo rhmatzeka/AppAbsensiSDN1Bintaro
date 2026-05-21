@@ -24,8 +24,8 @@ export async function GET(request: NextRequest) {
   const tanggal = searchParams.get("tanggal")?.trim();
 
   const where: Prisma.AbsensiWhereInput = {};
-  if (user.role === Role.GURU) where.kelasId = user.kelasId ?? "__none__";
-  if (kelasId && user.role === Role.ADMIN) where.kelasId = kelasId;
+  if (kelasId) where.kelasId = kelasId;
+  if (!kelasId && user.role === Role.GURU) where.kelasId = user.kelasId ?? "__none__";
   if (siswaId) where.siswaId = siswaId;
   if (tanggal) {
     const value = new Date(tanggal);
@@ -59,10 +59,6 @@ export async function POST(request: NextRequest) {
     }
 
     const tanggal = new Date(body.tanggal);
-    const kelasIds = [...new Set(body.items.map((item) => item.kelasId))];
-    if (user.role === Role.GURU && (kelasIds.length !== 1 || kelasIds[0] !== user.kelasId)) {
-      return NextResponse.json({ message: "Guru hanya bisa menginput kelas yang ditugaskan" }, { status: 403 });
-    }
 
     await prisma.$transaction(
       body.items.map((item) =>

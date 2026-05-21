@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { Role, StatusSiswa } from "@prisma/client";
+import { StatusSiswa } from "@prisma/client";
 import { jsonError, readJson, requireUser } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 
@@ -11,12 +11,11 @@ type KelasPayload = {
 };
 
 export async function GET() {
-  const { user, response } = await requireUser();
+  const { response } = await requireUser();
   if (response) return response;
 
   try {
     const kelas = await prisma.kelas.findMany({
-      where: user.role === Role.GURU ? { id: user.kelasId ?? "__none__" } : undefined,
       include: { _count: { select: { siswa: { where: { status: StatusSiswa.AKTIF } } } } },
       orderBy: [{ tingkat: "asc" }, { nama: "asc" }]
     });

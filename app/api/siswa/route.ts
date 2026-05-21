@@ -26,8 +26,8 @@ export async function GET(request: NextRequest) {
   const kelasId = searchParams.get("kelasId")?.trim();
 
   const where: Prisma.SiswaWhereInput = { status: StatusSiswa.AKTIF };
-  if (user.role === Role.GURU) where.kelasId = user.kelasId ?? "__none__";
-  if (kelasId && user.role === Role.ADMIN) where.kelasId = kelasId;
+  if (kelasId) where.kelasId = kelasId;
+  if (!kelasId && user.role === Role.GURU) where.kelasId = user.kelasId ?? "__none__";
   if (search) {
     where.OR = [
       { nama: { contains: search, mode: "insensitive" } },
