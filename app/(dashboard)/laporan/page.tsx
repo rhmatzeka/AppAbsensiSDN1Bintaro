@@ -69,6 +69,14 @@ export default function LaporanPage() {
   const periodLabel = periode === "mingguan"
     ? `${tanggalAwal} sampai ${tanggalAkhir}`
     : `${BULAN[bulan - 1]} ${tahun}`;
+  const signatureDateLabel = useMemo(() => {
+    if (periode === "bulanan") return `.... ${BULAN[bulan - 1]} ${tahun}`;
+
+    const endDate = new Date(tanggalAkhir);
+    if (Number.isNaN(endDate.getTime())) return ".... ....................";
+
+    return `.... ${BULAN[endDate.getMonth()]} ${endDate.getFullYear()}`;
+  }, [bulan, periode, tanggalAkhir, tahun]);
   const attendanceTotals = useMemo(() => {
     return (data ?? []).reduce(
       (totals, item) => ({
@@ -307,6 +315,26 @@ export default function LaporanPage() {
             </tbody>
           </Table>
         )}
+      </section>
+
+      <section className="print-only print-signature-section">
+        <div className="print-signature-grid">
+          <div className="print-signature-block">
+            <p>Mengetahui,</p>
+            <p>Kepala SDN Bintaro 01</p>
+            <div className="print-signature-space" />
+            <p className="print-signature-name">Asti Trisnarini, M.Pd.</p>
+            <p>NIP. ................................</p>
+          </div>
+
+          <div className="print-signature-block print-signature-right">
+            <p>Jakarta, {signatureDateLabel}</p>
+            <p>Guru Kelas {selectedKelasName === "Semua kelas" ? "................" : selectedKelasName}</p>
+            <div className="print-signature-space" />
+            <p className="print-signature-name">................................</p>
+            <p>NIP. ................................</p>
+          </div>
+        </div>
       </section>
     </PageShell>
   );

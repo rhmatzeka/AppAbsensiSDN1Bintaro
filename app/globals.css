@@ -189,18 +189,21 @@ textarea {
   .print-report-header {
     border-bottom: 2px solid #111827;
     margin-bottom: 10px;
-    padding-bottom: 8px;
+    padding-bottom: 10px;
+    text-align: center;
   }
 
   .print-report-header h2 {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 800;
-    margin: 0 0 4px;
+    letter-spacing: 0;
+    margin: 0 0 6px;
+    text-transform: uppercase;
   }
 
   .print-report-header p {
-    font-size: 11px;
-    margin: 1px 0;
+    font-size: 10.5px;
+    margin: 2px 0;
   }
 
   .print-report-summary {
@@ -212,9 +215,11 @@ textarea {
 
   .print-report-summary span {
     border: 1px solid #d1d5db;
+    background: #f9fafb !important;
     font-size: 10px;
     font-weight: 700;
     padding: 5px 6px;
+    text-align: center;
   }
 
   .print-section {
@@ -225,7 +230,7 @@ textarea {
   }
 
   .print-section + .print-section {
-    margin-top: 14px;
+    margin-top: 16px;
   }
 
   .print-section-title,
@@ -243,23 +248,68 @@ textarea {
     min-width: 0 !important;
     width: 100% !important;
     font-size: 9px !important;
+    page-break-inside: auto;
   }
 
   th,
   td {
-    border: 1px solid #d1d5db !important;
+    border: 1px solid #cbd5e1 !important;
     color: #111827 !important;
-    padding: 4px 5px !important;
+    line-height: 1.35 !important;
+    padding: 4.5px 5px !important;
     vertical-align: top !important;
   }
 
   th {
-    background: #f3f4f6 !important;
+    background: #eef2f7 !important;
     font-size: 8px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
   }
 
   tr {
     break-inside: avoid;
+  }
+
+  tbody tr:nth-child(even) td {
+    background: #fbfdff !important;
+  }
+
+  .print-signature-section {
+    break-inside: avoid;
+    margin-top: 26px;
+    page-break-inside: avoid;
+  }
+
+  .print-signature-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 28mm;
+    padding-top: 6px;
+  }
+
+  .print-signature-block {
+    font-size: 11px;
+    line-height: 1.45;
+    min-height: 118px;
+  }
+
+  .print-signature-block p {
+    margin: 0 0 3px;
+  }
+
+  .print-signature-right {
+    text-align: left;
+  }
+
+  .print-signature-space {
+    height: 58px;
+  }
+
+  .print-signature-name {
+    font-weight: 800;
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   [class*="overflow-x-auto"] {
