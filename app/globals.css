@@ -186,15 +186,64 @@ textarea {
     padding: 0 !important;
   }
 
-  .print-report-header {
-    border-bottom: 2px solid #111827;
-    margin-bottom: 10px;
+  .laporan-page > div:first-child {
+    display: none !important;
+  }
+
+  .print-letterhead {
+    align-items: center;
+    border-bottom: 3px double #111827;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 68px minmax(0, 1fr) 68px;
+    margin-bottom: 12px;
     padding-bottom: 10px;
+  }
+
+  .print-letterhead::after {
+    content: "";
+    display: block;
+    height: 68px;
+    width: 68px;
+  }
+
+  .print-letterhead-logo {
+    height: 68px !important;
+    object-fit: contain;
+    width: 68px !important;
+  }
+
+  .print-letterhead-copy {
+    line-height: 1.25;
+    text-align: center;
+  }
+
+  .print-letterhead-copy p {
+    font-size: 11px;
+    margin: 1px 0;
+  }
+
+  .print-letterhead-agency {
+    font-size: 12px !important;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .print-letterhead-school {
+    font-size: 22px !important;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .print-report-header {
+    margin-bottom: 10px;
+    padding-bottom: 2px;
     text-align: center;
   }
 
   .print-report-header h2 {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 800;
     letter-spacing: 0;
     margin: 0 0 6px;

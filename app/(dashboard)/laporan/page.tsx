@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { BookOpenText, CalendarDays, CheckCircle2, Download, Printer, ShieldAlert, Thermometer, UserRoundCheck, UsersRound } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
+import logoSdnBintaro from "@/components/asset/logosd-removebg-preview.png";
 import { PageShell } from "@/components/layout/page-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -129,6 +131,7 @@ export default function LaporanPage() {
 
   return (
     <PageShell
+      className="laporan-page"
       title="Laporan Absensi"
       description={`Rekap absensi ${periode} per siswa: ${periodLabel}.`}
       action={
@@ -143,6 +146,14 @@ export default function LaporanPage() {
       }
     >
       <section className="print-only">
+        <div className="print-letterhead">
+          <Image src={logoSdnBintaro} alt="Logo SDN Bintaro 01" className="print-letterhead-logo" priority />
+          <div className="print-letterhead-copy">
+            <p className="print-letterhead-agency">Pemerintah Provinsi DKI Jakarta</p>
+            <p className="print-letterhead-school">SDN Bintaro 01</p>
+            <p>Sistem Absensi Siswa</p>
+          </div>
+        </div>
         <div className="print-report-header">
           <h2>Laporan Absensi dan Kegiatan Guru</h2>
           <p>Periode: {periodLabel}</p>
