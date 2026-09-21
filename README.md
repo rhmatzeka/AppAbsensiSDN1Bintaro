@@ -1,161 +1,120 @@
-# App Absensi SDN Bintaro 01
+# SDN Bintaro 01 Attendance App
 
-Aplikasi absensi siswa berbasis web untuk mengelola data kelas, siswa, input absensi harian, rekap bulanan, dan laporan kehadiran.
+A web app that helps teachers at SDN Bintaro 01 (an elementary school) take daily attendance, keep student records, and print attendance reports.
 
-## Tech Stack
+**Live site:** https://absensisdnbintaro01.com
 
-- Next.js 15 App Router
-- React 19
-- TypeScript
-- PostgreSQL
-- Prisma ORM
-- NextAuth.js v5 credentials provider
-- Tailwind CSS v4
-- Bun
+## Features
 
-## Fitur
+- **Two roles**: admins manage everything, teachers only see the classes assigned to them
+- **Dashboard** with attendance statistics
+- **Daily attendance** per class and date, with a one-click "mark everyone present"
+- **Lesson notes**: the topic taught that day is saved with the attendance and shows up in reports
+- **Student management**: search, filter by class, pages, add/edit/delete, and CSV import
+- **Student profile** with statistics, a monthly calendar, and full attendance history
+- **Class management**
+- **Weekly and monthly reports** per student, exportable to CSV and printable
 
-- Login admin dan guru
-- Dashboard statistik kehadiran
-- Input absensi per kelas dan tanggal
-- Bulk action set semua siswa hadir
-- Manajemen siswa dengan pencarian, filter kelas, pagination, modal tambah/edit, hapus, dan import CSV
-- Detail siswa dengan statistik, kalender bulanan, dan riwayat absensi
-- Manajemen kelas
-- Laporan mingguan dan bulanan per siswa
-- Export laporan ke CSV
-- Print-friendly report
-- Catatan tema/materi pembelajaran dari input absensi tampil menyatu di laporan
-- Role access: admin mengelola semua data, guru dibatasi pada kelas yang ditugaskan
+## Tech stack
 
-## Setup Lokal
+Next.js 15 (App Router), React 19, TypeScript, PostgreSQL, Prisma, NextAuth.js v5, Tailwind CSS v4, Bun
 
-Install dependency:
+## Getting started
 
-```bash
-bun install
-```
+You need [Bun](https://bun.sh) and PostgreSQL (or Docker).
 
-Salin file environment:
+1. Install dependencies:
 
-```bash
-cp .env.example .env
-```
+   ```bash
+   bun install
+   ```
 
-Contoh `.env` untuk PostgreSQL lokal:
+2. Start a local PostgreSQL database with Docker (skip this if you already have one):
 
-```env
-DATABASE_URL="postgresql://absensi:absensi123@localhost:5432/absensi_db"
-NEXTAUTH_SECRET="local-development-secret-change-before-production"
-AUTH_SECRET="local-development-secret-change-before-production"
-NEXTAUTH_URL="http://localhost:3000"
-```
+   ```bash
+   docker run --name absensi-postgres \
+     -e POSTGRES_USER=absensi \
+     -e POSTGRES_PASSWORD=absensi123 \
+     -e POSTGRES_DB=absensi_db \
+     -p 5432:5432 \
+     -d postgres:16-alpine
+   ```
 
-Jalankan PostgreSQL dengan Docker:
+3. Copy the environment file and fill it in:
 
-```bash
-docker run --name absensi-postgres \
-  -e POSTGRES_USER=absensi \
-  -e POSTGRES_PASSWORD=absensi123 \
-  -e POSTGRES_DB=absensi_db \
-  -p 5432:5432 \
-  -d postgres:16-alpine
-```
+   ```bash
+   cp .env.example .env
+   ```
 
-Jalankan migration dan seed:
+   ```env
+   DATABASE_URL="postgresql://absensi:absensi123@localhost:5432/absensi_db"
+   NEXTAUTH_SECRET="any-long-random-string"
+   AUTH_SECRET="any-long-random-string"
+   NEXTAUTH_URL="http://localhost:3000"
+   ```
 
-```bash
-bun prisma migrate dev --name init
-bun prisma db seed
-```
+4. Create the tables and add demo data:
 
-Jalankan aplikasi:
+   ```bash
+   bun prisma migrate dev --name init
+   bun prisma db seed
+   ```
 
-```bash
-bun run dev
-```
+5. Start the app and open http://localhost:3000:
 
-Buka:
+   ```bash
+   bun run dev
+   ```
 
-```txt
-http://localhost:3000
-```
+### Demo accounts (local only)
 
-## Akun Demo
+The seed script creates these accounts. Change or remove them before using a real database.
 
-Admin:
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@sekolah.sch.id` | `admin123` |
+| Teacher | `guru@sekolah.sch.id` | `guru123` |
 
-```txt
-admin@sekolah.sch.id
-admin123
-```
-
-Guru:
-
-```txt
-guru@sekolah.sch.id
-guru123
-```
-
-## Script
+## Useful commands
 
 ```bash
-bun run dev
-bun run build
-bun run lint
-bun prisma generate
-bun prisma migrate dev
-bun prisma db seed
+bun run dev                # start the dev server
+bun run build              # production build
+bun run lint               # check code style
+bun prisma migrate dev     # apply database changes
+bun prisma db seed         # add demo data
 ```
 
-## Deployment
+## Deploying to Vercel
 
-Aplikasi siap deploy ke Vercel.
+1. Create a PostgreSQL database (Neon, Supabase, Vercel Postgres, etc.) and run the migrations against it.
+2. Add these environment variables in Vercel:
 
-Tambahkan environment variable berikut di Vercel:
+   ```env
+   DATABASE_URL="postgresql://..."
+   NEXTAUTH_SECRET="..."
+   AUTH_SECRET="..."
+   NEXTAUTH_URL="https://your-domain.com"
+   AUTH_URL="https://your-domain.com"
+   AUTH_TRUST_HOST="true"
+   ```
 
-```env
-DATABASE_URL="postgresql://..."
-NEXTAUTH_SECRET="..."
-AUTH_SECRET="..."
-NEXTAUTH_URL="https://domain-anda.com"
-AUTH_URL="https://domain-anda.com"
-AUTH_TRUST_HOST="true"
-```
+3. Use your real custom domain in `NEXTAUTH_URL` and `AUTH_URL`, not the `*.vercel.app` one, then redeploy.
 
-Gunakan domain production/custom domain pada `NEXTAUTH_URL` dan `AUTH_URL`, bukan domain `*.vercel.app`. Setelah environment variable diubah, lakukan redeploy agar konfigurasi Auth.js ikut terpakai.
+You can also import `vercel-domain.env` from this repo into Vercel to set the Auth.js domain values.
 
-Jika memakai tombol import env di dashboard Vercel, gunakan isi file `vercel-domain.env` dari project ini untuk memperbarui konfigurasi domain Auth.js.
+### Optional: Cloudflare in front of Vercel
 
-Gunakan PostgreSQL dari Neon, Supabase, Vercel Postgres, atau provider PostgreSQL lain. Jalankan migration ke database production sebelum digunakan.
+1. Add the domain to Cloudflare and switch the domain's nameservers (at your registrar) to the ones Cloudflare gives you.
+2. In Cloudflare DNS, point the domain to Vercel and turn the proxy on (orange cloud):
 
-## Cloudflare
+   ```txt
+   Type   Name   Value
+   A      @      76.76.21.21
+   CNAME  www    cname.vercel-dns-0.com
+   ```
 
-Untuk menambahkan proteksi Cloudflare pada domain `absensisdnbintaro01.com`, domain harus dikelola dari dashboard Cloudflare terlebih dahulu.
+   If Vercel shows a different CNAME target for your project, use that one.
+3. Keep both `example.com` and `www.example.com` added to the project in Vercel.
 
-Langkah ringkas:
-
-1. Tambahkan `absensisdnbintaro01.com` di Cloudflare.
-2. Salin nameserver yang diberikan Cloudflare.
-3. Di Domainesia, ganti nameserver dari `ns1.vercel-dns.com` dan `ns2.vercel-dns.com` ke nameserver Cloudflare.
-4. Di DNS Cloudflare, arahkan domain ke Vercel:
-
-```txt
-Type   Name   Value
-A      @      76.76.21.21
-CNAME  www    cname.vercel-dns-0.com
-```
-
-Jika Vercel menampilkan target CNAME khusus di dashboard, gunakan nilai dari Vercel tersebut.
-
-5. Aktifkan proxy Cloudflare pada record web traffic (`A` dan `CNAME`) agar statusnya `Proxied`.
-6. Di Vercel, pastikan domain `absensisdnbintaro01.com` dan `www.absensisdnbintaro01.com` tetap terdaftar di project.
-7. Di Vercel Environment Variables, gunakan domain production:
-
-```env
-NEXTAUTH_URL="https://absensisdnbintaro01.com"
-AUTH_URL="https://absensisdnbintaro01.com"
-AUTH_TRUST_HOST="true"
-```
-
-Catatan: setelah mengganti nameserver, propagasi DNS bisa memakan waktu hingga 24 jam.
+DNS changes can take up to 24 hours to spread.
