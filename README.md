@@ -4,6 +4,8 @@ A web app that helps teachers at SDN Bintaro 01 (an elementary school) take dail
 
 **Live site:** https://absensisdnbintaro01.com
 
+![SDN Bintaro 01 attendance app landing page](docs/images/preview.png)
+
 ## Features
 
 - **Two roles**: admins manage everything, teachers only see the classes assigned to them
